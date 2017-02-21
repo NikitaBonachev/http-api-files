@@ -12,6 +12,10 @@ COPY vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY php.ini /etc/php5/apache2/conf.d/99-php.ini
 EXPOSE 80 443
 
+# Composer
+COPY composer.phar /usr/bin/composer
+RUN chmod 0744 /usr/bin/composer
+
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
 CMD /run.sh

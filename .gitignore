@@ -1,0 +1,12 @@
+/docker_local
+/log/*
+
+# system
+.DS_Store
+Thumbs.db
+
+# ide and editors
+/.idea
+
+# Packages
+/vendor
