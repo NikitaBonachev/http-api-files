@@ -1,0 +1,10 @@
+
+app:
+    container_name: xsolla-test
+    build: "./docker"
+    net: host
+    volumes:
+      - ".:/data"
+    ports:
+      - "80:80"
+    working_dir: "/data"
