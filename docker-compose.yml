@@ -10,3 +10,7 @@ app:
     environment:
         - DEV_UID
         - DEV_GID
+        - MYSQL_ROOT_PASSWORD=12124
+        - MYSQL_DATABASE=xsolla_test
+        - MYSQL_USER=api
+        - MYSQL_PASSWORD=21333
