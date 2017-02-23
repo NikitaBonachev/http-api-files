@@ -33,13 +33,15 @@ class DataManager
 
     /**
      * @param string $name
+     * @param string $fileName
      *
      * @return bool
      */
-    public function addNewFile($name) {
+    public function addNewFile($name, $fileName) {
 
         $filesTable = $this->filesTableName;
-        $createFileQueryText = 'INSERT INTO ' . $filesTable . ' (name) VALUES ("' . $name . '");';
+        $createFileQueryText = 'INSERT INTO ' . $filesTable . ' 
+        (name, file_name) VALUES ("' . $name . '", "' . $fileName .'");';
 
         $db = $this->db;
 
@@ -134,6 +136,7 @@ class DataManager
         $query = 'CREATE TABLE ' . $filesTable . '(
                 `id` INT(11) NOT NULL AUTO_INCREMENT,
                 `name` CHAR(250) NOT NULL,
+                `file_name` CHAR(250) NOT NULL,
                 PRIMARY KEY(`id`)
             )
         ;';

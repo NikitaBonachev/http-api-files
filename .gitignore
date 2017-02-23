@@ -10,3 +10,6 @@ Thumbs.db
 
 # Packages
 /vendor
+
+# Storage
+/upload/*

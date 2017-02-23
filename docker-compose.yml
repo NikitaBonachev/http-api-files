@@ -8,8 +8,8 @@ app:
       - "80:80"
     working_dir: "/data"
     environment:
-        - DEV_UID
-        - DEV_GID
+        - DEV_UID=1000
+        - DEV_GID=1000
         - MYSQL_ROOT_PASSWORD=12124
         - MYSQL_DATABASE=xsolla_test
         - MYSQL_USER=api
