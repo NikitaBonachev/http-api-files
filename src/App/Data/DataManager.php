@@ -83,7 +83,7 @@ class DataManager
         $file = null;
 
         $filesTable = $this->filesTableName;
-        $filesQueryText = 'SELECT * from ' . $filesTable . ' WHERE id = ' . $id . ';';
+        $filesQueryText = 'SELECT * from ' . $filesTable . ' WHERE ID = ' . $id . ';';
 
         $db = $this->db;
         $query = $db->prepare($filesQueryText);

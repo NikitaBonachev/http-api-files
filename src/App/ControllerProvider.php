@@ -111,10 +111,8 @@ class ControllerProvider implements ControllerProviderInterface
      */
     public function getOneFileMeta(App $app, $id)
     {
-        $db = $app['db'];
-        $dataProvider = new \App\Data\DataManager($db);
-        $result = $dataProvider->getOneFile($id);
-        return $app->json($result);
+        $fileMeta = FilesStorage::getFileMeta($id, $app);
+        return $app->json($fileMeta);
     }
 
 
@@ -125,9 +123,7 @@ class ControllerProvider implements ControllerProviderInterface
      */
     public function deleteFile(App $app, $id)
     {
-        $db = $app['db'];
-        $dataProvider = new \App\Data\DataManager($db);
-        $result = $dataProvider->deleteFile($id);
+        $result = FilesStorage::deleteFile($id, $app);
         return $app->json($result);
     }
 

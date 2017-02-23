@@ -55,4 +55,46 @@ class FilesStorage
         }
     }
 
+
+    /**
+     * @param $id
+     * @param App $app
+     * @return int
+     */
+    public static function deleteFile($id, App $app)
+    {
+        $db = $app['db'];
+        $dataProvider = new \App\Data\DataManager($db);
+        $result = $dataProvider->getOneFile($id);
+
+        if (!file_exists(self::baseUploadPath() . $result['file_name'])) {
+            $app->abort(404);
+        } else {
+            unlink(self::baseUploadPath() . $result['file_name']);
+            return $dataProvider->deleteFile($id);
+        }
+    }
+
+    /**
+     * @param integer $id
+     * @param App $app
+     *
+     * @return bool
+     */
+    public static function getFileMeta($id, App $app)
+    {
+        $db = $app['db'];
+        $dataProvider = new \App\Data\DataManager($db);
+        $result = $dataProvider->getOneFile($id);
+
+        $filePath = self::baseUploadPath() . $result['file_name'];
+
+        if (!file_exists($filePath)) {
+            $app->abort(404);
+        } else {
+            $meta = get_meta_tags(self::baseUploadPath() . $result['name']);
+            return $meta;
+        }
+    }
+
 }
