@@ -2,8 +2,7 @@
   "name": "xsolla-test",
   "require": {
     "silex/silex":"~2.0",
-    "dflydev/doctrine-orm-service-provider":"~2.0.1",
-    "doctrine/dbal": "~2.2"
+    "doctrine/dbal": "~2.4"
   },
   "autoload": {
     "psr-4": {

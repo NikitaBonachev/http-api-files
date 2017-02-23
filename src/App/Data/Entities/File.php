@@ -13,6 +13,12 @@ class File
     /** @Column(type="string") **/
     protected $fileName;
 
+    public function __construct($id, $name)
+    {
+        $this->id = $id;
+        $this->fileName = $name;
+    }
+
     public function getId()
     {
         return $this->id;

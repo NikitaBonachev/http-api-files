@@ -19,6 +19,10 @@ class ControllerProvider implements ControllerProviderInterface
         $controllers = $app['controllers_factory'];
 
         $controllers
+            ->get('/files', [$this, 'files'])
+            ->bind('files');
+
+        $controllers
             ->get('/', [$this, 'homepage'])
             ->bind('homepage');
 
@@ -31,7 +35,7 @@ class ControllerProvider implements ControllerProviderInterface
 
     public function homepage(App $app)
     {
-        $result['state'] = 'homepage1';
+        $result['state'] = 'homepage2';
         return $app->json($result);
     }
 
@@ -39,6 +43,14 @@ class ControllerProvider implements ControllerProviderInterface
     {
         $result['state'] = 'blog';
         return $app->json($result);
+    }
+
+    public function files(App $app)
+    {
+//        $db = $app['db'];
+//        $dataProvider = new \App\Data\DataManager($db);
+//        $result['list'] = [];//$dataProvider->getFilesList();
+        return $app->json([]);
     }
 
     public function error(\Exception $e, Request $request, $code)
