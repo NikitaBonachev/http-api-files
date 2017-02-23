@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use Silex\Api\ControllerProviderInterface;
@@ -18,52 +19,48 @@ class ControllerProvider implements ControllerProviderInterface
      */
     public function connect(App $app)
     {
-
         $this->app = $app;
 
         $app->error([$this, 'error']);
 
         $controllers = $app['controllers_factory'];
 
+        // Get all files
         $controllers
             ->get('/files', [$this, 'getFiles'])
             ->bind('files');
 
+        // Upload new file
         $controllers
             ->post('/files', [$this, 'uploadFile']);
 
+        // Download one file
         $controllers
             ->get('/files/{id}', [$this, 'getOneFile']);
 
+        // Get file meta
         $controllers
             ->get('/files/{id}/meta', [$this, 'getOneFileMeta']);
 
+        // Update file
         $controllers
             ->post('/files/{id}', [$this, 'updateFile']);
 
+        // Update file name
+        $controllers
+            ->put('/files/{id}', [$this, 'updateFileName']);
+
+        // Delete file
         $controllers
             ->delete('/files/{id}', [$this, 'deleteFile']);
-
-        $controllers
-            ->get('/', [$this, 'homepage'])
-            ->bind('homepage');
 
         return $controllers;
     }
 
 
     /**
-     * @param App $app
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function homepage(App $app)
-    {
-        $result['state'] = 'homepage';
-        return $app->json($result);
-    }
-
-
-    /**
+     * Get all files
+     *
      * @param App $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
@@ -77,6 +74,8 @@ class ControllerProvider implements ControllerProviderInterface
 
 
     /**
+     * Update file
+     *
      * @param App $app
      * @param Request $request
      * @param $id
@@ -91,6 +90,24 @@ class ControllerProvider implements ControllerProviderInterface
 
 
     /**
+     * Update file name
+     *
+     * @param App $app
+     * @param Request $request
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function updateFileName(App $app, Request $request, $id)
+    {
+        $newName = json_decode($request->getContent(), true)['name'];
+        $result['result'] = FilesStorage::updateFileName($newName, $id, $app);
+        return $app->json($id);
+    }
+
+
+    /**
+     * Create new file
+     *
      * @param App $app
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
@@ -104,6 +121,8 @@ class ControllerProvider implements ControllerProviderInterface
 
 
     /**
+     * Download one file
+     *
      * @param App $app
      * @param $id
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
@@ -124,6 +143,8 @@ class ControllerProvider implements ControllerProviderInterface
 
 
     /**
+     * File meta
+     *
      * @param App $app
      * @param $id
      * @return \Symfony\Component\HttpFoundation\JsonResponse
@@ -136,6 +157,8 @@ class ControllerProvider implements ControllerProviderInterface
 
 
     /**
+     * Delete file
+     *
      * @param App $app
      * @param $id
      * @return \Symfony\Component\HttpFoundation\JsonResponse
@@ -148,6 +171,8 @@ class ControllerProvider implements ControllerProviderInterface
 
 
     /**
+     * Errors
+     *
      * @param \Exception $e
      * @param Request $request
      * @param $code

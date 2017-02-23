@@ -59,15 +59,28 @@ class FilesStorage
             unlink($path . $prevFile['file_name']);
         }
 
-        $newOriginalName = $file->getClientOriginalName();
         $newFileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
-        $result = $dataProvider->updateFile($id, $newOriginalName, $newFileName);
+        $result = $dataProvider->updateFile($id, $prevFile['original_name'], $newFileName);
 
         if ($file->move($path, $newFileName)) {
             return $result;
         } else {
             return false;
         }
+    }
+
+    /**
+     * @param string $newFileName
+     * @param integer $id
+     * @param App $app
+     *
+     * @return bool
+     */
+    public static function updateFileName($newFileName, $id, App $app)
+    {
+        $db = $app['db'];
+        $dataProvider = new DataManager($db);
+        return $dataProvider->updateFile($id, $newFileName);
     }
 
 

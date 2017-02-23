@@ -114,15 +114,21 @@ class DataManager
      *
      * @return bool
      */
-    public function updateFile($id, $newOriginalName, $newFileName)
+    public function updateFile($id, $newOriginalName, $newFileName = null)
     {
         $filesTable = $this->filesTableName;
         $filesQueryText = 'UPDATE ' . $filesTable . ' 
-            SET original_name = "' . $newOriginalName . '",
-            file_name = "' . $newFileName . '"
-            WHERE ID = ' . $id . ';';
+            SET original_name = "' . $newOriginalName . '"';
+
+        if ($newFileName) {
+            $filesQueryText .= ',file_name = "' . $newFileName . '" ';
+        }
+
+        $filesQueryText .= 'WHERE ID = ' . $id . ';';
+
         $db = $this->db;
         return $db->executeUpdate($filesQueryText);
+
     }
 
 
