@@ -94,11 +94,44 @@ class DataManager
     }
 
     /**
+     *
+     * @param int $id
+     * @param string $newName
+     *
+     * @return bool
+     */
+    public function updateFile($id, $newName)
+    {
+        $filesTable = $this->filesTableName;
+        $filesQueryText = 'UPDATE ' . $filesTable . ' SET name="' . $newName . '" WHERE ID = ' . $id . ';';
+        $db = $this->db;
+        return $db->executeUpdate($filesQueryText);
+    }
+
+
+    /**
+     *
+     * @param int $id
+     *
+     * @return int
+     */
+    public function deleteFile($id)
+    {
+        $file = null;
+
+        $filesTable = $this->filesTableName;
+        $db = $this->db;
+        $query = 'DELETE FROM ' . $filesTable . ' WHERE ID = ' . $id . ';';
+
+        return $db->executeUpdate($query);
+    }
+
+    /**
      * @return bool
      */
     private function createTableFilesList() {
         $filesTable = $this->filesTableName;
-        $createQueryText = 'CREATE TABLE ' . $filesTable . '(
+        $query = 'CREATE TABLE ' . $filesTable . '(
                 `id` INT(11) NOT NULL AUTO_INCREMENT,
                 `name` CHAR(250) NOT NULL,
                 PRIMARY KEY(`id`)
@@ -107,7 +140,7 @@ class DataManager
 
         $db = $this->db;
 
-        $selCreateQuery = $db->prepare($createQueryText);
+        $selCreateQuery = $db->prepare($query);
 
         return $selCreateQuery->execute();
     }

@@ -26,7 +26,22 @@ class ControllerProvider implements ControllerProviderInterface
             ->post('/files', [$this, 'uploadFile']);
 
         $controllers
-            ->post('/files/{id}', [$this, 'getOneFile']);
+            ->get('/files/{id}', [$this, 'getOneFile']);
+
+        $controllers
+            ->get('/files/{id}/meta', [$this, 'getOneFileMeta']);
+
+        $controllers
+            ->put('/files/{id}', [$this, 'updateFile'])
+            ->before(function (Request $request) {
+                if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+                    $data = json_decode($request->getContent(), true);
+                    $request->request->replace(is_array($data) ? $data : array());
+                }
+            });
+
+        $controllers
+            ->delete('/files/{id}', [$this, 'deleteFile']);
 
         $controllers
             ->get('/', [$this, 'homepage'])
@@ -49,12 +64,37 @@ class ControllerProvider implements ControllerProviderInterface
         return $app->json($result);
     }
 
+    public function updateFile(App $app, Request $request, $id)
+    {
+        $db = $app['db'];
+        $newName = $request->request->get('name');
+        $dataProvider = new \App\Data\DataManager($db);
+        $result = $dataProvider->updateFile($id, $newName);
+        return $app->json($result);
+    }
+
     public function getOneFile(App $app, $id)
     {
         $db = $app['db'];
         $dataProvider = new \App\Data\DataManager($db);
-        $result['id'] = $dataProvider->getOneFile($id);
-        return $app->json($id);
+        $result = $dataProvider->getOneFile($id);
+        return $app->json($result);
+    }
+
+    public function getOneFileMeta(App $app, $id)
+    {
+        $db = $app['db'];
+        $dataProvider = new \App\Data\DataManager($db);
+        $result = $dataProvider->getOneFile($id);
+        return $app->json($result);
+    }
+
+    public function deleteFile(App $app, $id)
+    {
+        $db = $app['db'];
+        $dataProvider = new \App\Data\DataManager($db);
+        $result = $dataProvider->deleteFile($id);
+        return $app->json($result);
     }
 
     public function uploadFile(App $app, Request $request)
