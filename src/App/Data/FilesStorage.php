@@ -13,6 +13,7 @@ class FilesStorage
         return __DIR__.'/../../../upload/';
     }
 
+
     /**
      * @param UploadedFile $file
      * @param App $app
@@ -24,18 +25,51 @@ class FilesStorage
         $path = self::baseUploadPath();
         $originalName = $file->getClientOriginalName();
 
-        $uuid1 = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
+        $fileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
 
-        if ($file->move($path, $uuid1)) {
+        if ($file->move($path, $fileName)) {
             $db = $app['db'];
             $dataProvider = new \App\Data\DataManager($db);
-        //    $id = $dataProvider->addNewFile($originalName, $uuid1);
-            $id = $dataProvider->addNewFile($originalName, $uuid1);
+            $id = $dataProvider->addNewFile($originalName, $fileName);
             return $id;
         } else {
             return false;
         }
     }
+
+
+    /**
+     * @param UploadedFile $file
+     * @param integer $id
+     * @param App $app
+     *
+     * @return bool
+     */
+    public static function updateFile($file, $id, App $app)
+    {
+        $db = $app['db'];
+        $dataProvider = new DataManager($db);
+
+        $prevFile = $dataProvider->getOneFile($id);
+        $path = self::baseUploadPath();
+
+        if (file_exists($path . $prevFile['file_name'])
+            && is_file($path . $prevFile['file_name'])
+        ) {
+            unlink($path . $prevFile['file_name']);
+        }
+
+        $newOriginalName = $file->getClientOriginalName();
+        $newFileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
+        $result = $dataProvider->updateFile($id, $newOriginalName, $newFileName);
+
+        if ($file->move($path, $newFileName)) {
+            return $result;
+        } else {
+            return false;
+        }
+    }
+
 
     /**
      * @param integer $id
@@ -46,7 +80,7 @@ class FilesStorage
     public static function getFile($id, App $app)
     {
         $db = $app['db'];
-        $dataProvider = new \App\Data\DataManager($db);
+        $dataProvider = new DataManager($db);
         $result = $dataProvider->getOneFile($id);
 
         if (!file_exists(self::baseUploadPath() . $result['file_name'])) {
@@ -68,16 +102,18 @@ class FilesStorage
     public static function deleteFile($id, App $app)
     {
         $db = $app['db'];
-        $dataProvider = new \App\Data\DataManager($db);
+        $dataProvider = new DataManager($db);
         $result = $dataProvider->getOneFile($id);
 
-        if (!file_exists(self::baseUploadPath() . $result['file_name'])) {
-            $app->abort(404);
-        } else {
-            unlink(self::baseUploadPath() . $result['file_name']);
-            return $dataProvider->deleteFile($id);
+        if (file_exists(self::baseUploadPath() . $result['file_name'])) {
+            if (is_file(self::baseUploadPath() . $result['file_name'] )) {
+                unlink(self::baseUploadPath() . $result['file_name']);
+            }
         }
+
+        return $dataProvider->deleteFile($id);
     }
+
 
     /**
      * @param integer $id
@@ -88,7 +124,7 @@ class FilesStorage
     public static function getFileMeta($id, App $app)
     {
         $db = $app['db'];
-        $dataProvider = new \App\Data\DataManager($db);
+        $dataProvider = new DataManager($db);
         $result = $dataProvider->getOneFile($id);
 
         $filePath = self::baseUploadPath() . $result['file_name'];
@@ -97,7 +133,6 @@ class FilesStorage
             $app->abort(404);
         } else {
 
-        //  $meta['stat'] = stat($filePath);
             $meta['mime'] = mime_content_type($filePath);
             $meta['meta_tags'] = get_meta_tags($filePath);
             try {

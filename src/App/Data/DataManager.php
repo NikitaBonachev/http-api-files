@@ -109,14 +109,18 @@ class DataManager
     /**
      *
      * @param int $id
-     * @param string $newName
+     * @param string $newOriginalName
+     * @param string $newFileName
      *
      * @return bool
      */
-    public function updateFile($id, $newName)
+    public function updateFile($id, $newOriginalName, $newFileName)
     {
         $filesTable = $this->filesTableName;
-        $filesQueryText = 'UPDATE ' . $filesTable . ' SET original_name="' . $newName . '" WHERE ID = ' . $id . ';';
+        $filesQueryText = 'UPDATE ' . $filesTable . ' 
+            SET original_name = "' . $newOriginalName . '",
+            file_name = "' . $newFileName . '"
+            WHERE ID = ' . $id . ';';
         $db = $this->db;
         return $db->executeUpdate($filesQueryText);
     }
@@ -130,12 +134,9 @@ class DataManager
      */
     public function deleteFile($id)
     {
-        $file = null;
-
         $filesTable = $this->filesTableName;
         $db = $this->db;
         $query = 'DELETE FROM ' . $filesTable . ' WHERE ID = ' . $id . ';';
-
         return $db->executeUpdate($query);
     }
 
@@ -154,7 +155,6 @@ class DataManager
         ;';
 
         $db = $this->db;
-
         $selCreateQuery = $db->prepare($query);
 
         return $selCreateQuery->execute();

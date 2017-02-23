@@ -11,6 +11,7 @@ class ControllerProvider implements ControllerProviderInterface
 {
     private $app;
 
+
     /**
      * @param App $app
      * @return mixed
@@ -38,13 +39,7 @@ class ControllerProvider implements ControllerProviderInterface
             ->get('/files/{id}/meta', [$this, 'getOneFileMeta']);
 
         $controllers
-            ->put('/files/{id}', [$this, 'updateFile'])
-            ->before(function (Request $request) {
-                if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-                    $data = json_decode($request->getContent(), true);
-                    $request->request->replace(is_array($data) ? $data : array());
-                }
-            });
+            ->post('/files/{id}', [$this, 'updateFile']);
 
         $controllers
             ->delete('/files/{id}', [$this, 'deleteFile']);
@@ -56,6 +51,7 @@ class ControllerProvider implements ControllerProviderInterface
         return $controllers;
     }
 
+
     /**
      * @param App $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
@@ -65,6 +61,7 @@ class ControllerProvider implements ControllerProviderInterface
         $result['state'] = 'homepage';
         return $app->json($result);
     }
+
 
     /**
      * @param App $app
@@ -78,6 +75,7 @@ class ControllerProvider implements ControllerProviderInterface
         return $app->json($result);
     }
 
+
     /**
      * @param App $app
      * @param Request $request
@@ -86,12 +84,24 @@ class ControllerProvider implements ControllerProviderInterface
      */
     public function updateFile(App $app, Request $request, $id)
     {
-        $db = $app['db'];
-        $newName = $request->request->get('name');
-        $dataProvider = new \App\Data\DataManager($db);
-        $result = $dataProvider->updateFile($id, $newName);
+        $files = $request->files->get('upload_file');
+        $result['result'] = FilesStorage::updateFile($files, $id, $app);
         return $app->json($result);
     }
+
+
+    /**
+     * @param App $app
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function uploadFile(App $app, Request $request)
+    {
+        $files = $request->files->get('upload_file');
+        $result['id'] = FilesStorage::createFile($files, $app);
+        return $app->json($result);
+    }
+
 
     /**
      * @param App $app
@@ -111,6 +121,7 @@ class ControllerProvider implements ControllerProviderInterface
             ]
         );
     }
+
 
     /**
      * @param App $app
@@ -135,20 +146,6 @@ class ControllerProvider implements ControllerProviderInterface
         return $app->json($result);
     }
 
-
-    /**
-     * @param App $app
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function uploadFile(App $app, Request $request)
-    {
-        $files = $request->files->get('upload_file');
-
-        $result['id'] = FilesStorage::createFile($files, $app);
-
-        return $app->json($result);
-    }
 
     /**
      * @param \Exception $e
