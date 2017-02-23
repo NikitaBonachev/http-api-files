@@ -100,8 +100,16 @@ class ControllerProvider implements ControllerProviderInterface
      */
     public function getOneFile(App $app, $id)
     {
-        $filePath = FilesStorage::getFile($id, $app);
-        return $app->sendFile($filePath);
+        $fileInfo = FilesStorage::getFile($id, $app);
+        return $app->sendFile(
+            $fileInfo['filePath'],
+            200,
+            [
+                'Content-Type' => mime_content_type($fileInfo['filePath']),
+                'Content-Disposition' => 'inline',
+                'filename' => basename($fileInfo['fileName'])
+            ]
+        );
     }
 
     /**

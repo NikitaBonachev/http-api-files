@@ -22,14 +22,15 @@ class FilesStorage
     public static function createFile($file, App $app)
     {
         $path = self::baseUploadPath();
-        $filename = $file->getClientOriginalName();
+        $originalName = $file->getClientOriginalName();
 
-        $uuid1 = Uuid::uuid1();
+        $uuid1 = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
 
         if ($file->move($path, $uuid1)) {
             $db = $app['db'];
             $dataProvider = new \App\Data\DataManager($db);
-            $id = $dataProvider->addNewFile($filename, $uuid1);
+        //    $id = $dataProvider->addNewFile($originalName, $uuid1);
+            $id = $dataProvider->addNewFile($originalName, $uuid1);
             return $id;
         } else {
             return false;
@@ -40,7 +41,7 @@ class FilesStorage
      * @param integer $id
      * @param App $app
      *
-     * @return bool
+     * @return array
      */
     public static function getFile($id, App $app)
     {
@@ -51,7 +52,10 @@ class FilesStorage
         if (!file_exists(self::baseUploadPath() . $result['file_name'])) {
             $app->abort(404);
         } else {
-            return self::baseUploadPath() . $result['file_name'];
+            return [
+                'filePath' => self::baseUploadPath() . $result['file_name'],
+                'fileName' => $result['original_name']
+            ];
         }
     }
 
@@ -92,7 +96,16 @@ class FilesStorage
         if (!file_exists($filePath)) {
             $app->abort(404);
         } else {
-            $meta = get_meta_tags(self::baseUploadPath() . $result['name']);
+
+        //  $meta['stat'] = stat($filePath);
+            $meta['mime'] = mime_content_type($filePath);
+            $meta['meta_tags'] = get_meta_tags($filePath);
+            try {
+                $meta['exif'] = exif_read_data($filePath);
+            } catch (\Exception $e) {
+
+            }
+
             return $meta;
         }
     }

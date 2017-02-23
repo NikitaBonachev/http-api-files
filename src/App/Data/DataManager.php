@@ -31,17 +31,28 @@ class DataManager
         }
     }
 
+    private function dropTable()
+    {
+        $filesTable = $this->filesTableName;
+        $query = 'DROP TABLE ' . $filesTable . ';';
+        $db = $this->db;
+        $selCreateQuery = $db->prepare($query);
+
+        return $selCreateQuery->execute();
+    }
+
     /**
-     * @param string $name
+     * @param string $originalName
      * @param string $fileName
      *
      * @return bool
      */
-    public function addNewFile($name, $fileName) {
+    public function addNewFile($originalName, $fileName)
+    {
 
         $filesTable = $this->filesTableName;
         $createFileQueryText = 'INSERT INTO ' . $filesTable . ' 
-        (name, file_name) VALUES ("' . $name . '", "' . $fileName .'");';
+        (original_name, file_name) VALUES ("' . $originalName . '", "' . $fileName .'");';
 
         $db = $this->db;
 
@@ -60,7 +71,7 @@ class DataManager
         $arFiles = [];
 
         $filesTable = $this->filesTableName;
-        $filesQueryText = 'SELECT ID, name from ' . $filesTable . ';';
+        $filesQueryText = 'SELECT ID, original_name from ' . $filesTable . ';';
 
         $db = $this->db;
         $query = $db->prepare($filesQueryText);
@@ -105,7 +116,7 @@ class DataManager
     public function updateFile($id, $newName)
     {
         $filesTable = $this->filesTableName;
-        $filesQueryText = 'UPDATE ' . $filesTable . ' SET name="' . $newName . '" WHERE ID = ' . $id . ';';
+        $filesQueryText = 'UPDATE ' . $filesTable . ' SET original_name="' . $newName . '" WHERE ID = ' . $id . ';';
         $db = $this->db;
         return $db->executeUpdate($filesQueryText);
     }
@@ -131,11 +142,12 @@ class DataManager
     /**
      * @return bool
      */
-    private function createTableFilesList() {
+    private function createTableFilesList()
+    {
         $filesTable = $this->filesTableName;
         $query = 'CREATE TABLE ' . $filesTable . '(
                 `id` INT(11) NOT NULL AUTO_INCREMENT,
-                `name` CHAR(250) NOT NULL,
+                `original_name` CHAR(250) NOT NULL,
                 `file_name` CHAR(250) NOT NULL,
                 PRIMARY KEY(`id`)
             )
