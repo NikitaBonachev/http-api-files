@@ -1,8 +1,11 @@
 <?php
+
 namespace App;
 
 use Silex\Application as SilexApplication;
 use Silex\Provider\WebProfilerServiceProvider;
+use Doctrine\Common\Cache\ApcCache;
+use Doctrine\Common\Cache\ArrayCache;
 
 class Application extends SilexApplication
 {
@@ -12,20 +15,11 @@ class Application extends SilexApplication
         $app = $this;
         $app->mount('', new ControllerProvider());
 
-        $config = new \Doctrine\DBAL\Configuration();
-
-        $connectionParams = array(
-            'dbname' => 'xsolla_test',
-            'user' => 'api',
-            'password' => '21333',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-        );
-        $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-
-        $conn->executeQuery("SHOW TABLES");
-
-        var_dump($conn->executeQuery("SHOW TABLES")->fetchAll());
-
+        $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
+            'db.options' => array(
+                'driver'   => 'pdo_sqlite',
+                'path'     => __DIR__.'/app.db',
+            ),
+        ));
     }
 }

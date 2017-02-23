@@ -52,7 +52,7 @@ class ControllerProvider implements ControllerProviderInterface
                 $message = 'The requested page could not be found.';
                 break;
             default:
-                $message = 'We are sorry, but something went terribly wrong.';
+                $message = $e . 'We are sorry, but something went terribly wrong.';
         }
 
         return new Response($message, $code);
