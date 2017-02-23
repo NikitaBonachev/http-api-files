@@ -61,18 +61,36 @@ class DataManager
         $filesQueryText = 'SELECT * from ' . $filesTable . ';';
 
         $db = $this->db;
-
         $query = $db->prepare($filesQueryText);
 
-        $mapFiles = function ($object) {
-            return new Entities\File($object['id'], $object['name']);
-        };
-
         if ($query->execute()) {
-            $arFiles = array_map($mapFiles, $query->fetchAll());
+            $arFiles = $query->fetchAll();
         }
 
         return $arFiles;
+    }
+
+    /**
+     *
+     * @param int $id
+     *
+     * @return \stdClass|null|array
+     */
+    public function getOneFile($id)
+    {
+        $file = null;
+
+        $filesTable = $this->filesTableName;
+        $filesQueryText = 'SELECT * from ' . $filesTable . ' WHERE id = ' . $id . ';';
+
+        $db = $this->db;
+        $query = $db->prepare($filesQueryText);
+
+        if ($query->execute()) {
+            $file = $query->fetch();
+        }
+
+        return $file;
     }
 
     /**

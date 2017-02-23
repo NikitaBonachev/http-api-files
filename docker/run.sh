@@ -43,4 +43,8 @@ fi
 rm -f $tfile
 
 # start all the services
-/usr/local/bin/supervisord -n
+chown -R www-data:www-data ./
+ulimit -s unlimited
+rm -rf '/var/run/apache2'
+service apache2 start
+mysqld

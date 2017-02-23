@@ -19,38 +19,51 @@ class ControllerProvider implements ControllerProviderInterface
         $controllers = $app['controllers_factory'];
 
         $controllers
-            ->get('/files', [$this, 'files'])
+            ->get('/files', [$this, 'getFiles'])
             ->bind('files');
+
+        $controllers
+            ->post('/files', [$this, 'uploadFile']);
+
+        $controllers
+            ->post('/files/{id}', [$this, 'getOneFile']);
 
         $controllers
             ->get('/', [$this, 'homepage'])
             ->bind('homepage');
-
-        $controllers
-            ->get('/blog', [$this, 'blog'])
-            ->bind('blog');
 
         return $controllers;
     }
 
     public function homepage(App $app)
     {
-        $result['state'] = 'homepage2';
+        $result['state'] = 'homepage';
         return $app->json($result);
     }
 
-    public function blog(App $app)
+    public function getFiles(App $app)
     {
-        $result['state'] = 'blog';
+        $db = $app['db'];
+        $dataProvider = new \App\Data\DataManager($db);
+        $result['list'] = $dataProvider->getFilesList();
         return $app->json($result);
     }
 
-    public function files(App $app)
+    public function getOneFile(App $app, $id)
     {
-//        $db = $app['db'];
-//        $dataProvider = new \App\Data\DataManager($db);
-//        $result['list'] = [];//$dataProvider->getFilesList();
-        return $app->json([]);
+        $db = $app['db'];
+        $dataProvider = new \App\Data\DataManager($db);
+        $result['id'] = $dataProvider->getOneFile($id);
+        return $app->json($id);
+    }
+
+    public function uploadFile(App $app, Request $request)
+    {
+        $name = $request->get('name');
+        $db = $app['db'];
+        $dataProvider = new \App\Data\DataManager($db);
+        $result['id'] = $dataProvider->addNewFile($name);
+        return $app->json($result);
     }
 
     public function error(\Exception $e, Request $request, $code)
