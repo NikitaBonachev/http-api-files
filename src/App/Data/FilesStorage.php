@@ -9,6 +9,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class FilesStorage
 {
 
+    private static function baseUploadPath() {
+        return __DIR__.'/../../../upload/';
+    }
+
     /**
      * @param UploadedFile $file
      * @param App $app
@@ -17,7 +21,7 @@ class FilesStorage
      */
     public static function createFile($file, App $app)
     {
-        $path = __DIR__.'/../../../upload/';
+        $path = self::baseUploadPath();
         $filename = $file->getClientOriginalName();
 
         $uuid1 = Uuid::uuid1();
@@ -29,6 +33,25 @@ class FilesStorage
             return $id;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * @param integer $id
+     * @param App $app
+     *
+     * @return bool
+     */
+    public static function getFile($id, App $app)
+    {
+        $db = $app['db'];
+        $dataProvider = new \App\Data\DataManager($db);
+        $result = $dataProvider->getOneFile($id);
+
+        if (!file_exists(self::baseUploadPath() . $result['file_name'])) {
+            $app->abort(404);
+        } else {
+            return self::baseUploadPath() . $result['file_name'];
         }
     }
 

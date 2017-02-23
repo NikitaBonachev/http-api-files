@@ -60,7 +60,7 @@ class DataManager
         $arFiles = [];
 
         $filesTable = $this->filesTableName;
-        $filesQueryText = 'SELECT * from ' . $filesTable . ';';
+        $filesQueryText = 'SELECT ID, name from ' . $filesTable . ';';
 
         $db = $this->db;
         $query = $db->prepare($filesQueryText);

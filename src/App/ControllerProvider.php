@@ -96,14 +96,12 @@ class ControllerProvider implements ControllerProviderInterface
     /**
      * @param App $app
      * @param $id
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function getOneFile(App $app, $id)
     {
-        $db = $app['db'];
-        $dataProvider = new \App\Data\DataManager($db);
-        $result = $dataProvider->getOneFile($id);
-        return $app->json($result);
+        $filePath = FilesStorage::getFile($id, $app);
+        return $app->sendFile($filePath);
     }
 
     /**
