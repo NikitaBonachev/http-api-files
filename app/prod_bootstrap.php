@@ -8,7 +8,7 @@ use Silex\Provider\DoctrineServiceProvider;
 $loader = require __DIR__.'/../vendor/autoload.php';
 $config = require  __DIR__.'/../config.php';
 
-$app_env = 'test';
+$app_env = 'prod';
 $app = new App\Application($app_env);
 $app['env'] = $app_env;
 
@@ -18,5 +18,3 @@ $app->register(
         'db.options' => \App\Config\ConfigProvider::getDatabaseConfig($app_env)
     ]
 );
-
-return $app;

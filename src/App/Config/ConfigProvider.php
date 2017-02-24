@@ -4,11 +4,11 @@ namespace App\Config;
 
 class ConfigProvider
 {
-
     static private function defaultConfigPath()
     {
-        return __DIR__ . '/../../../dev_config.php';
+        return __DIR__ . '/../../../config.php';
     }
+
 
     /**
      * Setting configuration
@@ -38,13 +38,22 @@ class ConfigProvider
 
     }
 
+
     /**
-     * Database
+     * @param $env
      *
-     * @return array
+     * @return array|\Exception
+     * @throws \Exception
      */
-    static public function getDB()
+    static public function getDatabaseConfig($env)
     {
-        return self::file('database');
+        $databases = self::file('databases');
+
+        if (is_array($databases) && isset($databases[$env])) {
+            return $databases[$env];
+        } else {
+            throw new \Exception('Settings empty . Env: ' . $env);
+        }
     }
+
 }

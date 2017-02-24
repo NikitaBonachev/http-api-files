@@ -13,10 +13,12 @@ class DataManager
      */
     private $db;
 
+
     /**
      * @var string
      */
     private $filesTableName;
+
 
     /**
      * @param Connection $db
@@ -37,9 +39,13 @@ class DataManager
         $query = 'DROP TABLE ' . $filesTable . ';';
         $db = $this->db;
         $selCreateQuery = $db->prepare($query);
-
-        return $selCreateQuery->execute();
+        try {
+            return $selCreateQuery->execute();
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
+
 
     /**
      * @param string $originalName
@@ -63,6 +69,7 @@ class DataManager
 
     }
 
+
     /**
      * @return \stdClass|null|array
      */
@@ -82,6 +89,7 @@ class DataManager
 
         return $arFiles;
     }
+
 
     /**
      *
@@ -106,6 +114,7 @@ class DataManager
         return $file;
     }
 
+
     /**
      *
      * @param int $id
@@ -125,10 +134,9 @@ class DataManager
         }
 
         $filesQueryText .= 'WHERE ID = ' . $id . ';';
-
         $db = $this->db;
-        return $db->executeUpdate($filesQueryText);
 
+        return $db->executeUpdate($filesQueryText);
     }
 
 
@@ -146,6 +154,7 @@ class DataManager
         return $db->executeUpdate($query);
     }
 
+
     /**
      * @return bool
      */
@@ -153,7 +162,7 @@ class DataManager
     {
         $filesTable = $this->filesTableName;
         $query = 'CREATE TABLE ' . $filesTable . '(
-                `id` INT(11) NOT NULL AUTO_INCREMENT,
+                `ID` INT(11) NOT NULL AUTO_INCREMENT,
                 `original_name` CHAR(250) NOT NULL,
                 `file_name` CHAR(250) NOT NULL,
                 PRIMARY KEY(`id`)
@@ -165,5 +174,4 @@ class DataManager
 
         return $selCreateQuery->execute();
     }
-
 }

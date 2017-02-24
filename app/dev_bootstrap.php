@@ -8,7 +8,7 @@ use Silex\Provider\DoctrineServiceProvider;
 $loader = require __DIR__.'/../vendor/autoload.php';
 $config = require  __DIR__.'/../config.php';
 
-$app_env = 'test';
+$app_env = 'dev';
 $app = new App\Application($app_env);
 $app['env'] = $app_env;
 
@@ -19,4 +19,4 @@ $app->register(
     ]
 );
 
-return $app;
+return [$app, $loader];

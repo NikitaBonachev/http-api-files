@@ -12,7 +12,7 @@ class ConfigProviderTest extends TestCase
     {
         $fileMethod = self::getMethod('file');
         $configProvider = new ConfigProvider();
-        $result = $fileMethod->invokeArgs($configProvider, ['database']);
+        $result = $fileMethod->invokeArgs($configProvider, ['databases']);
         $this->assertNotNull($result);
     }
 
@@ -29,6 +29,15 @@ class ConfigProviderTest extends TestCase
     /**
      * @expectedException \Exception
      */
+    public function testWrongEnv()
+    {
+        $env = 'wrong_env';
+        $this->expectException(ConfigProvider::getDatabaseConfig($env));
+    }
+
+    /**
+     * @expectedException \Exception
+     */
     public function testWrongFile()
     {
         $fileMethod = self::getMethod('file');
@@ -36,13 +45,15 @@ class ConfigProviderTest extends TestCase
         $this->expectException($fileMethod->invokeArgs($configProvider, ['super_wrong_db']));
     }
 
-    public function testGetDB()
+    public function testGetTestDB()
     {
-        $this->assertArrayHasKey('dbname', ConfigProvider::getDB());
-        $this->assertArrayHasKey('user', ConfigProvider::getDB());
-        $this->assertArrayHasKey('password', ConfigProvider::getDB());
-        $this->assertArrayHasKey('host', ConfigProvider::getDB());
-        $this->assertArrayHasKey('driver', ConfigProvider::getDB());
+        $env = 'test';
+        $databaseConfig = ConfigProvider::getDatabaseConfig($env);
+        $this->assertArrayHasKey('dbname', $databaseConfig);
+        $this->assertArrayHasKey('user', $databaseConfig);
+        $this->assertArrayHasKey('password', $databaseConfig);
+        $this->assertArrayHasKey('host', $databaseConfig);
+        $this->assertArrayHasKey('driver', $databaseConfig);
     }
 
     protected static function getMethod($name) {

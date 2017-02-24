@@ -66,9 +66,6 @@ class ControllerProvider implements ControllerProviderInterface
      */
     public function getFiles(App $app)
     {
-        echo '<pre style="font-size: 14pt; line-height: 1.5;">';
-        var_dump(phpversion());
-        echo '</pre>';
         $db = $app['db'];
         $dataProvider = new \App\Data\DataManager($db);
         $result['list'] = $dataProvider->getFilesList();
