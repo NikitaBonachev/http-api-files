@@ -100,7 +100,7 @@ class ControllerProvider implements ControllerProviderInterface
     public function updateFileName(App $app, Request $request, $id)
     {
         $newName = json_decode($request->getContent(), true)['name'];
-        $result['result'] = FilesStorage::updateFileName($newName, $id, $app);
+        $result['result'] = FilesStorage::updateFileName($id, $newName, $app);
         return $app->json($id);
     }
 
@@ -136,7 +136,7 @@ class ControllerProvider implements ControllerProviderInterface
             [
                 'Content-Type' => mime_content_type($fileInfo['filePath']),
                 'Content-Disposition' => 'inline',
-                'filename' => basename($fileInfo['fileName'])
+                'filename' => basename($fileInfo['originalName'])
             ]
         );
     }

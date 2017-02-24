@@ -28,5 +28,10 @@ return [
                 'path' => __DIR__ . '/cache/xsolla_test.db'
             ]
         ]
+    ],
+    'uploadDirs' => [
+        'prod' => __DIR__.'/upload/',
+        'dev' => __DIR__.'/upload/',
+        'test' => __DIR__.'/upload/test/'
     ]
 ];

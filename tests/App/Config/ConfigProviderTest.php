@@ -56,6 +56,21 @@ class ConfigProviderTest extends TestCase
         $this->assertArrayHasKey('driver', $databaseConfig);
     }
 
+    /**
+     * @expectedException \Exception
+     */
+    public function testWrongUploadDir()
+    {
+        $env = 'wrong_env';
+        $this->expectException(ConfigProvider::getUploadDir($env));
+    }
+
+    public function testGetUploadDir()
+    {
+        $env = 'test';
+        $this->assertTrue(is_string(ConfigProvider::getUploadDir($env)));
+    }
+
     protected static function getMethod($name) {
         $class = new \ReflectionClass('App\Config\ConfigProvider');
         $method = $class->getMethod($name);

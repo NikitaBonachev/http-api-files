@@ -2,17 +2,13 @@
 
 namespace App\Data;
 
+use App\Config\ConfigProvider;
 use Ramsey\Uuid\Uuid;
 use Silex\Application as App;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FilesStorage
 {
-
-    private static function baseUploadPath() {
-        return __DIR__.'/../../../upload/';
-    }
-
 
     /**
      * @param UploadedFile $file
@@ -22,19 +18,15 @@ class FilesStorage
      */
     public static function createFile($file, App $app)
     {
-        $path = self::baseUploadPath();
+        $path = ConfigProvider::getUploadDir($app['env']);
         $originalName = $file->getClientOriginalName();
 
         $fileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
 
-        if ($file->move($path, $fileName)) {
-            $db = $app['db'];
-            $dataProvider = new \App\Data\DataManager($db);
-            $id = $dataProvider->addNewFile($originalName, $fileName);
-            return $id;
-        } else {
-            return false;
-        }
+        $file->move($path, $fileName);
+        $db = $app['db'];
+        $dataProvider = new \App\Data\DataManager($db);
+        return $dataProvider->addNewFile($originalName, $fileName);
     }
 
 
@@ -49,24 +41,26 @@ class FilesStorage
     {
         $db = $app['db'];
         $dataProvider = new DataManager($db);
+        $result = 0;
 
         $prevFile = $dataProvider->getOneFile($id);
-        $path = self::baseUploadPath();
 
-        if (file_exists($path . $prevFile['file_name'])
-            && is_file($path . $prevFile['file_name'])
-        ) {
-            unlink($path . $prevFile['file_name']);
+        if ($prevFile['ID'] > 0) {
+            $path = ConfigProvider::getUploadDir($app['env']);
+
+            if (file_exists($path . $prevFile['file_name'])
+                && is_file($path . $prevFile['file_name'])
+            ) {
+                unlink($path . $prevFile['file_name']);
+            }
+
+            $newFileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
+            $result = $dataProvider->updateFile($id, $prevFile['original_name'], $newFileName);
+
+            $file->move($path, $newFileName);
         }
 
-        $newFileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
-        $result = $dataProvider->updateFile($id, $prevFile['original_name'], $newFileName);
-
-        if ($file->move($path, $newFileName)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     /**
@@ -76,7 +70,7 @@ class FilesStorage
      *
      * @return bool
      */
-    public static function updateFileName($newFileName, $id, App $app)
+    public static function updateFileName($id, $newFileName, App $app)
     {
         $db = $app['db'];
         $dataProvider = new DataManager($db);
@@ -95,13 +89,14 @@ class FilesStorage
         $db = $app['db'];
         $dataProvider = new DataManager($db);
         $result = $dataProvider->getOneFile($id);
+        $uploadPath = ConfigProvider::getUploadDir($app['env']);
 
-        if (!file_exists(self::baseUploadPath() . $result['file_name'])) {
-            $app->abort(404);
+        if (!file_exists($uploadPath . $result['file_name']) || $result == 0) {
+            return $app->abort(404);
         } else {
             return [
-                'filePath' => self::baseUploadPath() . $result['file_name'],
-                'fileName' => $result['original_name']
+                'filePath' => $uploadPath . $result['file_name'],
+                'originalName' => $result['original_name']
             ];
         }
     }
@@ -117,10 +112,11 @@ class FilesStorage
         $db = $app['db'];
         $dataProvider = new DataManager($db);
         $result = $dataProvider->getOneFile($id);
+        $uploadPath = ConfigProvider::getUploadDir($app['env']);
 
-        if (file_exists(self::baseUploadPath() . $result['file_name'])) {
-            if (is_file(self::baseUploadPath() . $result['file_name'] )) {
-                unlink(self::baseUploadPath() . $result['file_name']);
+        if (file_exists($uploadPath . $result['file_name'])) {
+            if (is_file($uploadPath . $result['file_name'] )) {
+                unlink($uploadPath . $result['file_name']);
             }
         }
 
@@ -140,10 +136,10 @@ class FilesStorage
         $dataProvider = new DataManager($db);
         $result = $dataProvider->getOneFile($id);
 
-        $filePath = self::baseUploadPath() . $result['file_name'];
+        $filePath = ConfigProvider::getUploadDir($app['env']) . $result['file_name'];
 
-        if (!file_exists($filePath)) {
-            $app->abort(404);
+        if (!file_exists($filePath) || $result['ID'] == 0) {
+            return $app->abort(404);
         } else {
 
             $meta['mime'] = mime_content_type($filePath);
