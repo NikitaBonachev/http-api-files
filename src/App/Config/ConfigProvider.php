@@ -2,8 +2,8 @@
 
 namespace App\Config;
 
-class ConfigProvider {
-
+class ConfigProvider
+{
     /**
      * Setting configuration
      *
