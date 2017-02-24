@@ -8,6 +8,14 @@ require __DIR__ . '/../../test_bootstrap.php';
 
 class DataManagerTest extends TestCase
 {
+    protected function tearDown()
+    {
+        parent::tearDown();
+        $dataProvider = self::getDataProvider();
+        $dropTableMethod = self::getMethod('dropTable');
+        $dropTableMethod->invokeArgs($dataProvider, []);
+    }
+
     private function getDataProvider()
     {
         $app = require __DIR__.'/../../test_bootstrap.php';

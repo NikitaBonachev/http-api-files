@@ -99,7 +99,7 @@ class DataManager
      */
     public function getOneFile($id)
     {
-        $file = null;
+        $file = ['ID' => 0]; // empty file
 
         $filesTable = $this->filesTableName;
         $filesQueryText = 'SELECT * from ' . $filesTable . ' WHERE ID = ' . $id . ';';
@@ -165,7 +165,7 @@ class DataManager
                 `ID` INT(11) NOT NULL AUTO_INCREMENT,
                 `original_name` CHAR(250) NOT NULL,
                 `file_name` CHAR(250) NOT NULL,
-                PRIMARY KEY(`id`)
+                PRIMARY KEY(`ID`)
             )
         ;';
 

@@ -6,6 +6,7 @@ use App\Config\ConfigProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use PHPUnit\Framework\TestCase;
 use App\Data\FilesStorage as FilesStorage;
+use App\Data\DataManager as DataManager;
 require __DIR__ . '/../../test_bootstrap.php';
 
 class FilesStorageTest extends TestCase
@@ -64,6 +65,24 @@ class FilesStorageTest extends TestCase
         self::deleteDirectory(ConfigProvider::getUploadDir($this->getApp()['env']));
         mkdir(ConfigProvider::getUploadDir($this->getApp()['env']));
         mkdir(ConfigProvider::getUploadDir($this->getApp()['env']) . 'create');
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+        self::deleteDirectory(ConfigProvider::getUploadDir($this->getApp()['env']));
+        $app = $this->getApp();
+        $db = $app['db'];
+        $dataProvider = new DataManager($db);
+        $dropTableMethod = self::getMethod('dropTable');
+        $dropTableMethod->invokeArgs($dataProvider, []);
+    }
+
+    protected static function getMethod($name) {
+        $class = new \ReflectionClass('App\Data\DataManager');
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+        return $method;
     }
 
     public function testCreateFile()
