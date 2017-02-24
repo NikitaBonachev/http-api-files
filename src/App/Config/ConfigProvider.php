@@ -4,7 +4,10 @@ namespace App\Config;
 
 class ConfigProvider
 {
-    static private function defaultConfigPath()
+    /**
+     * @return string
+     */
+    private static function defaultConfigPath()
     {
         return __DIR__ . '/../../../config.php';
     }
@@ -19,7 +22,7 @@ class ConfigProvider
      * @return array
      * @throws \Exception
      */
-    static private function file($name, $filePath = null)
+    private static function file($name, $filePath = null)
     {
         if (!$filePath) {
             $filePath = self::defaultConfigPath();
@@ -45,7 +48,7 @@ class ConfigProvider
      * @return array|\Exception
      * @throws \Exception
      */
-    static public function getDatabaseConfig($env)
+    public static function getDatabaseConfig($env)
     {
         $databases = self::file('databases');
 
@@ -63,7 +66,7 @@ class ConfigProvider
      * @return array|\Exception
      * @throws \Exception
      */
-    static public function getUploadDir($env)
+    public static function getUploadDir($env)
     {
         $uploadDirs = self::file('uploadDirs');
 
@@ -73,5 +76,4 @@ class ConfigProvider
             throw new \Exception('Settings upload dir empty . Env: ' . $env);
         }
     }
-
 }

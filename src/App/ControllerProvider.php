@@ -7,6 +7,7 @@ use Silex\Application as App;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Data\FilesStorage;
+use App\Data\DataManager;
 
 class ControllerProvider implements ControllerProviderInterface
 {
@@ -67,7 +68,7 @@ class ControllerProvider implements ControllerProviderInterface
     public function getFiles(App $app)
     {
         $db = $app['db'];
-        $dataProvider = new \App\Data\DataManager($db);
+        $dataProvider = new DataManager($db);
         $result['list'] = $dataProvider->getFilesList();
         return $app->json($result);
     }
@@ -193,7 +194,7 @@ class ControllerProvider implements ControllerProviderInterface
 
         return $this->app->json(
             [
-                "code" =>$code,
+                "code" => $code,
                 "message" => $message,
                 "request" => $request->getContent()
             ],

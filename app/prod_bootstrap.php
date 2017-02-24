@@ -5,8 +5,7 @@ use Silex\Provider\WebProfilerServiceProvider;
 use Symfony\Component\HttpKernel\Debug\ExceptionHandler;
 use Silex\Provider\DoctrineServiceProvider;
 
-$loader = require __DIR__.'/../vendor/autoload.php';
-$config = require  __DIR__.'/../config.php';
+$loader = require __DIR__ . '/../vendor/autoload.php';
 
 $app_env = 'prod';
 $app = new App\Application($app_env);

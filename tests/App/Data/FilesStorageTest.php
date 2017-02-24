@@ -12,8 +12,9 @@ class FilesStorageTest extends TestCase
 {
     private function getApp()
     {
-        return require __DIR__.'/../../test_bootstrap.php';
+        return require __DIR__ . '/../../test_bootstrap.php';
     }
+
 
     private function deleteDirectory($dir)
     {
@@ -39,6 +40,7 @@ class FilesStorageTest extends TestCase
         return rmdir($dir);
     }
 
+
     private function createUploadFile($originalName)
     {
         $content = "some content here";
@@ -57,6 +59,7 @@ class FilesStorageTest extends TestCase
         );
     }
 
+
     protected function setUp()
     {
         parent::setUp();
@@ -65,6 +68,7 @@ class FilesStorageTest extends TestCase
         mkdir(ConfigProvider::getUploadDir($this->getApp()['env']));
         mkdir(ConfigProvider::getUploadDir($this->getApp()['env']) . 'create');
     }
+
 
     protected function tearDown()
     {
@@ -77,12 +81,15 @@ class FilesStorageTest extends TestCase
         $dropTableMethod->invokeArgs($dataProvider, []);
     }
 
-    protected static function getMethod($name) {
+
+    protected static function getMethod($name)
+    {
         $class = new \ReflectionClass('App\Data\DataManager');
         $method = $class->getMethod($name);
         $method->setAccessible(true);
         return $method;
     }
+
 
     public function testCreateFile()
     {
@@ -90,6 +97,7 @@ class FilesStorageTest extends TestCase
         $id = FilesStorage::createFile($newFile, $this->getApp());
         $this->assertTrue($id > 0);
     }
+
 
     public function testUpdateFile()
     {
@@ -100,19 +108,22 @@ class FilesStorageTest extends TestCase
         $this->assertTrue($result > 0);
     }
 
+
     public function testUpdateFileName()
     {
         $oldName = 'oldName.txt';
         $newName = 'newName.txt';
         $newFile = self::createUploadFile($oldName);
         $id = FilesStorage::createFile($newFile, $this->getApp());
-        $resultUpdate = FilesStorage::updateFileName($id, $newName, $this->getApp());
+        $resultUpdate = FilesStorage::updateFileName($id, $newName,
+            $this->getApp());
 
         $testUpdate = FilesStorage::getFile($id, $this->getApp());
 
         $this->assertTrue($resultUpdate > 0);
         $this->assertTrue($newName == $testUpdate['originalName']);
     }
+
 
     public function testGetFile()
     {
@@ -125,6 +136,7 @@ class FilesStorageTest extends TestCase
         );
     }
 
+
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\HttpException
      */
@@ -132,6 +144,7 @@ class FilesStorageTest extends TestCase
     {
         $this->expectException(FilesStorage::getFile(999999, $this->getApp()));
     }
+
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\HttpException
@@ -146,9 +159,11 @@ class FilesStorageTest extends TestCase
         $this->expectException(FilesStorage::getFile($id, $this->getApp()));
     }
 
+
     public function testGetFileMeta()
     {
-        copy(__DIR__.'/TestFiles/Xsolla.htm', ConfigProvider::getUploadDir($this->getApp()['env']) . "create/Xsolla.htm");
+        copy(__DIR__ . '/TestFiles/Xsolla.htm',
+            ConfigProvider::getUploadDir($this->getApp()['env']) . "create/Xsolla.htm");
         $newFile = new UploadedFile(
             ConfigProvider::getUploadDir($this->getApp()['env']) . "create/Xsolla.htm",
             ConfigProvider::getUploadDir($this->getApp()['env']) . "create/Xsolla.htm",
@@ -158,15 +173,17 @@ class FilesStorageTest extends TestCase
             true
         );
         $id = FilesStorage::createFile($newFile, $this->getApp());
-        $this->assertTrue(is_array(FilesStorage::getFileMeta($id, $this->getApp())));
+        $this->assertTrue(is_array(FilesStorage::getFileMeta($id,
+            $this->getApp())));
     }
+
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function testWrongGetFileMeta()
     {
-        $this->assertTrue(is_array(FilesStorage::getFileMeta(777777, $this->getApp())));
+        $this->assertTrue(is_array(FilesStorage::getFileMeta(777777,
+            $this->getApp())));
     }
-
 }

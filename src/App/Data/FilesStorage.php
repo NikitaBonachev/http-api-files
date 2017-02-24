@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FilesStorage
 {
-
     /**
      * @param UploadedFile $file
      * @param App $app
@@ -22,10 +21,10 @@ class FilesStorage
         $originalName = $file->getClientOriginalName();
 
         $fileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
-
         $file->move($path, $fileName);
         $db = $app['db'];
-        $dataProvider = new \App\Data\DataManager($db);
+        $dataProvider = new DataManager($db);
+
         return $dataProvider->addNewFile($originalName, $fileName);
     }
 
@@ -55,13 +54,15 @@ class FilesStorage
             }
 
             $newFileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
-            $result = $dataProvider->updateFile($id, $prevFile['original_name'], $newFileName);
+            $result = $dataProvider->updateFile($id, $prevFile['original_name'],
+                $newFileName);
 
             $file->move($path, $newFileName);
         }
 
         return $result;
     }
+
 
     /**
      * @param string $newFileName
@@ -115,7 +116,7 @@ class FilesStorage
         $uploadPath = ConfigProvider::getUploadDir($app['env']);
 
         if (file_exists($uploadPath . $result['file_name'])) {
-            if (is_file($uploadPath . $result['file_name'] )) {
+            if (is_file($uploadPath . $result['file_name'])) {
                 unlink($uploadPath . $result['file_name']);
             }
         }
@@ -147,11 +148,10 @@ class FilesStorage
             try {
                 $meta['exif'] = exif_read_data($filePath);
             } catch (\Exception $e) {
-
+                // No exif - it's normal
             }
 
             return $meta;
         }
     }
-
 }

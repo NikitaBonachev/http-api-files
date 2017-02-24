@@ -4,6 +4,7 @@ namespace DataManagerTest;
 
 use PHPUnit\Framework\TestCase;
 use App\Data\DataManager as DataManager;
+
 require __DIR__ . '/../../test_bootstrap.php';
 
 class DataManagerTest extends TestCase
@@ -16,17 +17,20 @@ class DataManagerTest extends TestCase
         $dropTableMethod->invokeArgs($dataProvider, []);
     }
 
+
     private function getDataProvider()
     {
-        $app = require __DIR__.'/../../test_bootstrap.php';
+        $app = require __DIR__ . '/../../test_bootstrap.php';
         $db = $app['db'];
         return new DataManager($db);
     }
+
 
     public function testConstruct()
     {
         $this->assertNotNull(self::getDataProvider());
     }
+
 
     public function testDropTable()
     {
@@ -35,6 +39,7 @@ class DataManagerTest extends TestCase
         $result = $dropTableMethod->invokeArgs($dataProvider, []);
         $this->assertTrue($result);
     }
+
 
     /**
      * @expectedException \Exception
@@ -49,6 +54,7 @@ class DataManagerTest extends TestCase
         $this->expectException($resultSecond);
     }
 
+
     public function testAddNewFile()
     {
         $dataProvider = self::getDataProvider();
@@ -56,12 +62,14 @@ class DataManagerTest extends TestCase
         $this->assertTrue($id > 0);
     }
 
+
     public function testGetFilesList()
     {
         $dataProvider = self::getDataProvider();
         $list = $dataProvider->getFilesList();
         $this->assertTrue(is_array($list));
     }
+
 
     public function testGetFilesListAfterAdding()
     {
@@ -76,6 +84,7 @@ class DataManagerTest extends TestCase
             }
         }
     }
+
 
     public function testDeleteFile()
     {
@@ -102,6 +111,7 @@ class DataManagerTest extends TestCase
         $this->assertTrue($wasDeleted);
     }
 
+
     public function testGetOneFile()
     {
         $originalName = 'getOneFile.txt';
@@ -115,6 +125,7 @@ class DataManagerTest extends TestCase
             && $getOne['file_name'] == $fileName
         );
     }
+
 
     public function testUpdateFile()
     {
@@ -147,7 +158,9 @@ class DataManagerTest extends TestCase
         );
     }
 
-    protected static function getMethod($name) {
+
+    protected static function getMethod($name)
+    {
         $class = new \ReflectionClass('App\Data\DataManager');
         $method = $class->getMethod($name);
         $method->setAccessible(true);

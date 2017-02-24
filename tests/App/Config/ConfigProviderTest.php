@@ -4,6 +4,7 @@ namespace ConfigProviderTest;
 
 use PHPUnit\Framework\TestCase;
 use App\Config\ConfigProvider;
+
 require __DIR__ . '/../../test_bootstrap.php';
 
 class ConfigProviderTest extends TestCase
@@ -16,6 +17,7 @@ class ConfigProviderTest extends TestCase
         $this->assertNotNull($result);
     }
 
+
     /**
      * @expectedException \Exception
      */
@@ -23,8 +25,10 @@ class ConfigProviderTest extends TestCase
     {
         $fileMethod = self::getMethod('file');
         $configProvider = new ConfigProvider();
-        $this->expectException($fileMethod->invokeArgs($configProvider, ['super_wrong_db', 'wrong_path']));
+        $this->expectException($fileMethod->invokeArgs($configProvider,
+            ['super_wrong_db', 'wrong_path']));
     }
+
 
     /**
      * @expectedException \Exception
@@ -35,6 +39,7 @@ class ConfigProviderTest extends TestCase
         $this->expectException(ConfigProvider::getDatabaseConfig($env));
     }
 
+
     /**
      * @expectedException \Exception
      */
@@ -42,8 +47,10 @@ class ConfigProviderTest extends TestCase
     {
         $fileMethod = self::getMethod('file');
         $configProvider = new ConfigProvider();
-        $this->expectException($fileMethod->invokeArgs($configProvider, ['super_wrong_db']));
+        $this->expectException($fileMethod->invokeArgs($configProvider,
+            ['super_wrong_db']));
     }
+
 
     public function testGetTestDB()
     {
@@ -56,6 +63,7 @@ class ConfigProviderTest extends TestCase
         $this->assertArrayHasKey('driver', $databaseConfig);
     }
 
+
     /**
      * @expectedException \Exception
      */
@@ -65,13 +73,16 @@ class ConfigProviderTest extends TestCase
         $this->expectException(ConfigProvider::getUploadDir($env));
     }
 
+
     public function testGetUploadDir()
     {
         $env = 'test';
         $this->assertTrue(is_string(ConfigProvider::getUploadDir($env)));
     }
 
-    protected static function getMethod($name) {
+
+    protected static function getMethod($name)
+    {
         $class = new \ReflectionClass('App\Config\ConfigProvider');
         $method = $class->getMethod($name);
         $method->setAccessible(true);

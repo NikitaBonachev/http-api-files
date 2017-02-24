@@ -7,7 +7,6 @@ use App\Data\Entities;
 
 class DataManager
 {
-
     /**
      * @var Connection
      */
@@ -21,18 +20,9 @@ class DataManager
 
 
     /**
-     * @param Connection $db
+     * @return bool
+     * @throws \Exception
      */
-    public function __construct(Connection $db)
-    {
-        $this->db = $db;
-        $this->filesTableName = 'files';
-
-        if (!$db->getSchemaManager()->tablesExist(['files'])) {
-            self::createTableFilesList();
-        }
-    }
-
     private function dropTable()
     {
         $filesTable = $this->filesTableName;
@@ -48,6 +38,41 @@ class DataManager
 
 
     /**
+     * @return bool
+     */
+    private function createTableFilesList()
+    {
+        $filesTable = $this->filesTableName;
+        $query = 'CREATE TABLE ' . $filesTable . '(
+                `ID` INT(11) NOT NULL AUTO_INCREMENT,
+                `original_name` CHAR(250) NOT NULL,
+                `file_name` CHAR(250) NOT NULL,
+                PRIMARY KEY(`ID`)
+            )
+        ;';
+
+        $db = $this->db;
+        $selCreateQuery = $db->prepare($query);
+
+        return $selCreateQuery->execute();
+    }
+
+
+    /**
+     * @param Connection $db
+     */
+    public function __construct(Connection $db)
+    {
+        $this->db = $db;
+        $this->filesTableName = 'files';
+
+        if (!$db->getSchemaManager()->tablesExist(['files'])) {
+            self::createTableFilesList();
+        }
+    }
+
+
+    /**
      * @param string $originalName
      * @param string $fileName
      *
@@ -58,7 +83,7 @@ class DataManager
 
         $filesTable = $this->filesTableName;
         $createFileQueryText = 'INSERT INTO ' . $filesTable . ' 
-        (original_name, file_name) VALUES ("' . $originalName . '", "' . $fileName .'");';
+        (original_name, file_name) VALUES ("' . $originalName . '", "' . $fileName . '");';
 
         $db = $this->db;
 
@@ -152,26 +177,5 @@ class DataManager
         $db = $this->db;
         $query = 'DELETE FROM ' . $filesTable . ' WHERE ID = ' . $id . ';';
         return $db->executeUpdate($query);
-    }
-
-
-    /**
-     * @return bool
-     */
-    private function createTableFilesList()
-    {
-        $filesTable = $this->filesTableName;
-        $query = 'CREATE TABLE ' . $filesTable . '(
-                `ID` INT(11) NOT NULL AUTO_INCREMENT,
-                `original_name` CHAR(250) NOT NULL,
-                `file_name` CHAR(250) NOT NULL,
-                PRIMARY KEY(`ID`)
-            )
-        ;';
-
-        $db = $this->db;
-        $selCreateQuery = $db->prepare($query);
-
-        return $selCreateQuery->execute();
     }
 }

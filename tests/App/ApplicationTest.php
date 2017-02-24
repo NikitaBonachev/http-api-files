@@ -10,7 +10,7 @@ class ApplicationTest extends WebTestCase
 {
     public function createApplication()
     {
-        return require __DIR__.'/../test_bootstrap.php';
+        return require __DIR__ . '/../test_bootstrap.php';
     }
 
     public function testCreatingApplication()
