@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use PHPUnit\Framework\TestCase;
 use App\Data\FilesStorage as FilesStorage;
 use App\Data\DataManager as DataManager;
-require __DIR__ . '/../../test_bootstrap.php';
 
 class FilesStorageTest extends TestCase
 {

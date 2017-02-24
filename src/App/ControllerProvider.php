@@ -32,7 +32,7 @@ class ControllerProvider implements ControllerProviderInterface
 
         // Upload new file
         $controllers
-            ->post('/files', [$this, 'uploadFile']);
+            ->post('/files', [$this, 'uploadNewFile']);
 
         // Download one file
         $controllers
@@ -48,7 +48,7 @@ class ControllerProvider implements ControllerProviderInterface
 
         // Update file name
         $controllers
-            ->put('/files/{id}', [$this, 'updateFileName']);
+            ->put('/files/{id}/name', [$this, 'updateFileName']);
 
         // Delete file
         $controllers
@@ -84,8 +84,8 @@ class ControllerProvider implements ControllerProviderInterface
     public function updateFile(App $app, Request $request, $id)
     {
         $files = $request->files->get('upload_file');
-        $result['result'] = FilesStorage::updateFile($files, $id, $app);
-        return $app->json($result);
+        $result['id'] = FilesStorage::updateFile($files, $id, $app);
+        return $app->json($result, Response::HTTP_OK);
     }
 
 
@@ -100,7 +100,7 @@ class ControllerProvider implements ControllerProviderInterface
     public function updateFileName(App $app, Request $request, $id)
     {
         $newName = json_decode($request->getContent(), true)['name'];
-        $result['result'] = FilesStorage::updateFileName($id, $newName, $app);
+        $result['id'] = FilesStorage::updateFileName($id, $newName, $app);
         return $app->json($id);
     }
 
@@ -112,11 +112,11 @@ class ControllerProvider implements ControllerProviderInterface
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function uploadFile(App $app, Request $request)
+    public function uploadNewFile(App $app, Request $request)
     {
         $files = $request->files->get('upload_file');
-        $result['id'] = FilesStorage::createFile($files, $app);
-        return $app->json($result);
+        $result['ID'] = FilesStorage::createFile($files, $app);
+        return $app->json($result, Response::HTTP_CREATED);
     }
 
 
@@ -132,7 +132,7 @@ class ControllerProvider implements ControllerProviderInterface
         $fileInfo = FilesStorage::getFile($id, $app);
         return $app->sendFile(
             $fileInfo['filePath'],
-            200,
+            Response::HTTP_OK,
             [
                 'Content-Type' => mime_content_type($fileInfo['filePath']),
                 'Content-Disposition' => 'inline',
@@ -161,12 +161,15 @@ class ControllerProvider implements ControllerProviderInterface
      *
      * @param App $app
      * @param $id
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function deleteFile(App $app, $id)
     {
-        $result = FilesStorage::deleteFile($id, $app);
-        return $app->json($result);
+        if (FilesStorage::deleteFile($id, $app) == 1) {
+            return new Response('', Response::HTTP_NO_CONTENT);
+        } else {
+            return new Response('', Response::HTTP_NOT_FOUND);
+        }
     }
 
 
@@ -180,18 +183,21 @@ class ControllerProvider implements ControllerProviderInterface
      */
     public function error(\Exception $e, Request $request, $code)
     {
-        if (!$this->app['debug']) {
-            switch ($code) {
-                case 404:
-                    $message = 'The requested page could not be found.';
-                    break;
-                default:
-                    $message = $e . 'We are sorry, but something went terribly wrong.';
-            }
-
-            return new Response($message, $code);
+        switch ($code) {
+            case Response::HTTP_NOT_FOUND:
+                $message = 'The requested page could not be found.';
+                break;
+            default:
+                $message = $e . 'We are sorry, but something went terribly wrong.';
         }
 
+        return $this->app->json(
+            [
+                "code" =>$code,
+                "message" => $message,
+                "request" => $request->getContent()
+            ],
+            $code
+        );
     }
-
 }
