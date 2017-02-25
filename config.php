@@ -32,6 +32,6 @@ return [
     'uploadDirs' => [
         'prod' => __DIR__.'/upload/',
         'dev' => __DIR__.'/upload/',
-        'test' => __DIR__.'/upload/test/'
+        'test' => __DIR__.'/upload_test/'
     ]
 ];

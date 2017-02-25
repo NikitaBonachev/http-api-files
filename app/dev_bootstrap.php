@@ -18,4 +18,8 @@ $app->register(
     ]
 );
 
+if (!is_dir(\App\Config\ConfigProvider::getUploadDir($app_env))) {
+    mkdir(\App\Config\ConfigProvider::getUploadDir($app_env));
+}
+
 return [$app, $loader];

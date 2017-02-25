@@ -12,5 +12,6 @@ Thumbs.db
 
 # Storage
 /upload/*
+/upload_test/*
 /tmp/*
 /log/*

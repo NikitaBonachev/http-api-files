@@ -88,15 +88,26 @@ class ControllerProvider implements ControllerProviderInterface
         $id = ApiUtils::checkRequestId($id);
         if (ApiUtils::checkRequestFile($file) && $id) {
             $result['id'] = FilesStorage::updateFile($file, $id, $app);
-            return $app->json($result, Response::HTTP_OK);
+            if ($result['id'] == 0) {
+                return $app->json(
+                    [
+                        "code" => Response::HTTP_NOT_FOUND,
+                        "message" => "File with this ID not found",
+                        "request" => $request->getContent()
+                    ],
+                    Response::HTTP_NOT_FOUND
+                );
+            } else {
+                return $app->json($result, Response::HTTP_OK);
+            }
         } else {
             return $app->json(
                 [
                     "code" => Response::HTTP_BAD_REQUEST,
                     "message" => "File missing or non integer ID",
-                    "request" => ""
+                    "request" => $request->getContent()
                 ],
-                Response::HTTP_NOT_FOUND
+                Response::HTTP_BAD_REQUEST
             );
         }
     }
