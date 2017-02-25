@@ -59,6 +59,38 @@ class DataManager
 
 
     /**
+     * @param $id
+     * @return bool
+     */
+    private function isIdExist($id)
+    {
+        $db = $this->db;
+        $filesTable = $this->filesTableName;
+        $checkFileExist = "SELECT id FROM $filesTable WHERE id = $id";
+        $queryCheckExist = $db->prepare($checkFileExist);
+        $queryCheckExist->execute();
+        return !!$queryCheckExist->fetch();
+    }
+
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    private function getFileByName($name)
+    {
+        $db = $this->db;
+        $filesTable = $this->filesTableName;
+        $lowerCaseOriginalName = strtolower($name);
+        $checkFileNameQueryText = "SELECT id FROM $filesTable 
+                WHERE LOWER(original_name) = '$lowerCaseOriginalName'";
+        $queryCheckName = $db->prepare($checkFileNameQueryText);
+        $queryCheckName->execute();
+        return $queryCheckName->fetch()['id'];
+    }
+
+
+    /**
      * @param Connection $db
      */
     public function __construct(Connection $db)
@@ -154,26 +186,14 @@ class DataManager
         $filesTable = $this->filesTableName;
         $db = $this->db;
 
-        // Check if file exists
-        $checkFileExist = "SELECT id FROM $filesTable WHERE id = $id";
-        $queryCheckExist = $db->prepare($checkFileExist);
-        $queryCheckExist->execute();
-
-        if (!$queryCheckExist->fetch()) {
+        if (!self::isIdExist($id)) {
             return -1;
         }
 
         // Check if file with the same name exists
         $foundIdWithSameName = 0;
         if ($newOriginalName) {
-            $lowerCaseOriginalName = strtolower($newOriginalName);
-            $checkFileNameQueryText = "SELECT id FROM $filesTable 
-                WHERE LOWER(original_name) = '$lowerCaseOriginalName'";
-
-            $queryCheckName = $db->prepare($checkFileNameQueryText);
-            $queryCheckName->execute();
-
-            $foundIdWithSameName = $queryCheckName->fetch()['id'];
+            $foundIdWithSameName = self::getFileByName($newOriginalName);
         }
 
         if ($foundIdWithSameName != $id && $foundIdWithSameName > 0) {
