@@ -145,15 +145,17 @@ class FilesStorage
         if (!file_exists($filePath) || $result['id'] == 0) {
             return $app->abort(404);
         } else {
-
-            $meta['mime'] = mime_content_type($filePath);
-            $meta['meta_tags'] = get_meta_tags($filePath);
+            $meta['name'] = $result['original_name'];
+            $meta['size'] = filesize($filePath);
+            $meta['modified'] = gmdate(DATE_RFC1123, filemtime($filePath));
+            $meta['created'] = gmdate(DATE_RFC1123, filectime($filePath));
+            $meta['mime_type'] = mime_content_type($filePath);
+            $meta['md5'] = hash_file("md5", $filePath);
             try {
                 $meta['exif'] = exif_read_data($filePath);
             } catch (\Exception $e) {
                 // No exif - it's normal
             }
-
             return $meta;
         }
     }
