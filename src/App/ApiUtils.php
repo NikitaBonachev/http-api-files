@@ -23,14 +23,10 @@ class ApiUtils
      */
     public static function checkRequestId($id)
     {
-        $idParseInt = intval($id);
-        if (!is_int($idParseInt)) {
-            return false;
+        if (filter_var($id, FILTER_VALIDATE_INT)) {
+            return intval($id);
         }
-        if ($idParseInt == 0) {
-            return false;
-        }
-        return $idParseInt;
+        return false;
     }
 
 

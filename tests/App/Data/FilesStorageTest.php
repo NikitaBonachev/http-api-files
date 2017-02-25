@@ -1,6 +1,6 @@
 <?php
 
-namespace DataManagerTest;
+namespace FilesStorageTest;
 
 use App\Config\ConfigProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
