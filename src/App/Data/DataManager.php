@@ -145,22 +145,50 @@ class DataManager
      * @param string $newOriginalName
      * @param string $newFileName
      *
-     * @return bool
+     * @return integer
      */
-    public function updateFile($id, $newOriginalName, $newFileName = null)
+    public function updateFile($id, $newOriginalName = null, $newFileName = null)
     {
         $filesTable = $this->filesTableName;
-        $filesQueryText = "UPDATE $filesTable 
-            SET original_name = '$newOriginalName'";
-
-        if ($newFileName) {
-            $filesQueryText .= ",file_name = '$newFileName'";
-        }
-
-        $filesQueryText .= "WHERE id = $id;";
         $db = $this->db;
 
-        return $db->executeUpdate($filesQueryText);
+        $checkFileExist = "SELECT id FROM $filesTable WHERE id = $id";
+        $queryCheckExist = $db->prepare($checkFileExist);
+        $queryCheckExist->execute();
+
+        if (!$queryCheckExist->fetch()) {
+            return -1;
+        }
+
+        $lowerCaseOriginalName = strtolower($newOriginalName);
+        $checkFileNameQueryText = "SELECT id FROM $filesTable WHERE LOWER(original_name) = '$lowerCaseOriginalName'";
+
+        $queryCheckName = $db->prepare($checkFileNameQueryText);
+        $queryCheckName->execute();
+
+        $foundIdWithSameName = $queryCheckName->fetch()['id'];
+
+        if ($foundIdWithSameName != $id && $foundIdWithSameName > 0) {
+            return 0;
+        } else {
+            $filesQueryText = "UPDATE $filesTable ";
+
+            if ($newOriginalName) {
+                $filesQueryText .= "SET original_name = '$newOriginalName' ";
+            }
+
+            if ($newFileName) {
+                if ($newOriginalName) {
+                    $filesQueryText .= ",";
+                }
+                $filesQueryText .= "file_name = '$newFileName' ";
+            }
+
+            $filesQueryText .= "WHERE id = $id;";
+            $db->executeUpdate($filesQueryText);
+
+            return 1;
+        }
     }
 
 

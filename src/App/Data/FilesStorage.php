@@ -6,6 +6,7 @@ use App\Config\ConfigProvider;
 use Ramsey\Uuid\Uuid;
 use Silex\Application as App;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response as HTTPResponse;
 
 class FilesStorage
 {
@@ -72,7 +73,8 @@ class FilesStorage
      * @param integer $id
      * @param App $app
      *
-     * @return bool
+     * @return bool|
+     * @throws \Exception
      */
     public static function updateFileName($id, $newFileName, App $app)
     {
@@ -96,7 +98,7 @@ class FilesStorage
         $uploadPath = ConfigProvider::getUploadDir($app['env']);
 
         if (!file_exists($uploadPath . $result['file_name']) || $result == 0) {
-            return $app->abort(404);
+            return $app->abort(HTTPResponse::HTTP_NOT_FOUND);
         } else {
             return [
                 'filePath' => $uploadPath . $result['file_name'],

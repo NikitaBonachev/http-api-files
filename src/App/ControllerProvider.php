@@ -37,15 +37,19 @@ class ControllerProvider implements ControllerProviderInterface
 
         // Download one file
         $controllers
-            ->get('/files/{id}', [$this, 'getOneFile']);
+            ->get('/files/{id}', [$this, 'getFile']);
 
         // Get file meta
         $controllers
-            ->get('/files/{id}/meta', [$this, 'getOneFileMeta']);
+            ->get('/files/{id}/meta', [$this, 'getFileMeta']);
 
-        // Update file
+        // Update file content (preferred)
         $controllers
-            ->post('/files/{id}', [$this, 'updateFile']);
+            ->put('/files/{id}/content', [$this, 'updateFileContent']);
+
+        // Update file content (not preferred)
+        $controllers
+            ->post('/files/{id}/content', [$this, 'updateFileContent']);
 
         // Update file name
         $controllers
@@ -101,8 +105,24 @@ class ControllerProvider implements ControllerProviderInterface
     public function updateFileName(App $app, Request $request, $id)
     {
         $newName = json_decode($request->getContent(), true)['name'];
-        $result['id'] = FilesStorage::updateFileName($id, $newName, $app);
-        return $app->json($id);
+        $result = FilesStorage::updateFileName($id, $newName, $app);
+        if ($result > 0) {
+            return $app->json(['id' => $id], Response::HTTP_OK);
+        } elseif ($result == -1 ) {
+            $errorResponse = [
+                "code" => Response::HTTP_NOT_FOUND,
+                "message" => "File with this id not found. Id = " . $id,
+                "request" => $request->getContent()
+            ];
+            return $app->json($errorResponse, Response::HTTP_BAD_REQUEST);
+        } else {
+            $errorResponse = [
+                "code" => Response::HTTP_BAD_REQUEST,
+                "message" => "File with this name already exists",
+                "request" => $request->getContent()
+            ];
+            return $app->json($errorResponse, Response::HTTP_BAD_REQUEST);
+        }
     }
 
 
@@ -128,7 +148,7 @@ class ControllerProvider implements ControllerProviderInterface
      * @param $id
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function getOneFile(App $app, $id)
+    public function getFile(App $app, $id)
     {
         $fileInfo = FilesStorage::getFile($id, $app);
         return $app->sendFile(
