@@ -26,7 +26,7 @@ class DataManager
     private function dropTable()
     {
         $filesTable = $this->filesTableName;
-        $query = 'DROP TABLE ' . $filesTable . ';';
+        $query = "DROP TABLE $filesTable;";
         $db = $this->db;
         $selCreateQuery = $db->prepare($query);
         try {
@@ -43,13 +43,14 @@ class DataManager
     private function createTableFilesList()
     {
         $filesTable = $this->filesTableName;
-        $query = 'CREATE TABLE ' . $filesTable . '(
-                `ID` INT(11) NOT NULL AUTO_INCREMENT,
-                `original_name` CHAR(250) NOT NULL,
-                `file_name` CHAR(250) NOT NULL,
-                PRIMARY KEY(`ID`)
+        $query = "CREATE TABLE `$filesTable` (
+                id INT(11) NOT NULL AUTO_INCREMENT,
+                original_name CHAR(250) NOT NULL,
+                file_name CHAR(250) NOT NULL,
+                file_extension CHAR(10),
+                PRIMARY KEY(ID)
             )
-        ;';
+        ;";
 
         $db = $this->db;
         $selCreateQuery = $db->prepare($query);
@@ -65,7 +66,6 @@ class DataManager
     {
         $this->db = $db;
         $this->filesTableName = 'files';
-
         if (!$db->getSchemaManager()->tablesExist(['files'])) {
             self::createTableFilesList();
         }
@@ -75,15 +75,16 @@ class DataManager
     /**
      * @param string $originalName
      * @param string $fileName
+     * @param string $fileExtension
      *
      * @return bool
      */
-    public function addNewFile($originalName, $fileName)
+    public function addNewFile($originalName, $fileName, $fileExtension = "")
     {
-
         $filesTable = $this->filesTableName;
-        $createFileQueryText = 'INSERT INTO ' . $filesTable . ' 
-        (original_name, file_name) VALUES ("' . $originalName . '", "' . $fileName . '");';
+        $createFileQueryText = "INSERT INTO $filesTable 
+        (original_name, file_name, file_extension) VALUES 
+        ('$originalName', '$fileName', '$fileExtension');";
 
         $db = $this->db;
 
@@ -91,7 +92,6 @@ class DataManager
         $createFileQuery->execute();
 
         return $db->lastInsertId();
-
     }
 
 
@@ -103,7 +103,7 @@ class DataManager
         $arFiles = [];
 
         $filesTable = $this->filesTableName;
-        $filesQueryText = 'SELECT ID, original_name from ' . $filesTable . ';';
+        $filesQueryText = "SELECT id, original_name as name, file_extension from $filesTable;";
 
         $db = $this->db;
         $query = $db->prepare($filesQueryText);
@@ -124,10 +124,10 @@ class DataManager
      */
     public function getOneFile($id)
     {
-        $file = ['ID' => 0]; // empty file
+        $file = ['id' => 0]; // empty file
 
         $filesTable = $this->filesTableName;
-        $filesQueryText = 'SELECT * from ' . $filesTable . ' WHERE ID = ' . $id . ';';
+        $filesQueryText = "SELECT * from $filesTable WHERE id = $id;";
 
         $db = $this->db;
         $query = $db->prepare($filesQueryText);
@@ -151,14 +151,14 @@ class DataManager
     public function updateFile($id, $newOriginalName, $newFileName = null)
     {
         $filesTable = $this->filesTableName;
-        $filesQueryText = 'UPDATE ' . $filesTable . ' 
-            SET original_name = "' . $newOriginalName . '"';
+        $filesQueryText = "UPDATE $filesTable 
+            SET original_name = '$newOriginalName'";
 
         if ($newFileName) {
-            $filesQueryText .= ',file_name = "' . $newFileName . '" ';
+            $filesQueryText .= ",file_name = '$newFileName'";
         }
 
-        $filesQueryText .= 'WHERE ID = ' . $id . ';';
+        $filesQueryText .= "WHERE id = $id;";
         $db = $this->db;
 
         return $db->executeUpdate($filesQueryText);
@@ -175,7 +175,7 @@ class DataManager
     {
         $filesTable = $this->filesTableName;
         $db = $this->db;
-        $query = 'DELETE FROM ' . $filesTable . ' WHERE ID = ' . $id . ';';
+        $query = "DELETE FROM $filesTable WHERE id = $id;";
         return $db->executeUpdate($query);
     }
 }

@@ -107,7 +107,7 @@ class ControllerProviderTest extends WebTestCase
         $content = $response->getContent();
         $this->assertJson($content);
 
-        $this->assertTrue(json_decode($content, true)['ID'] > 0);
+        $this->assertTrue(json_decode($content, true)['id'] > 0);
         $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_CREATED);
     }
 
@@ -131,7 +131,7 @@ class ControllerProviderTest extends WebTestCase
             ['upload_file' => $fileUpload]);
         $response = $clientCreate->getResponse();
         $content = $response->getContent();
-        $newFileId = json_decode($content, true)['ID'];
+        $newFileId = json_decode($content, true)['id'];
 
         $clientGet = $this->createClient();
         $clientGet->request('GET', '/files/' . $newFileId);
@@ -159,7 +159,7 @@ class ControllerProviderTest extends WebTestCase
             ['upload_file' => $fileUpload]);
         $response = $clientCreate->getResponse();
         $content = $response->getContent();
-        $newFileId = json_decode($content, true)['ID'];
+        $newFileId = json_decode($content, true)['id'];
 
         $clientGet = $this->createClient();
         $clientGet->request('GET', '/files/' . $newFileId . '/meta');
@@ -187,7 +187,7 @@ class ControllerProviderTest extends WebTestCase
             ['upload_file' => $fileUpload]);
         $response = $clientCreate->getResponse();
         $content = $response->getContent();
-        $newFileId = json_decode($content, true)['ID'];
+        $newFileId = json_decode($content, true)['id'];
 
         $clientDelete = $this->createClient();
         $clientDelete->request('delete', '/files/' . $newFileId);
@@ -220,7 +220,7 @@ class ControllerProviderTest extends WebTestCase
             ['upload_file' => $fileUpload]);
         $response = $clientCreate->getResponse();
         $content = $response->getContent();
-        $newFileId = json_decode($content, true)['ID'];
+        $newFileId = json_decode($content, true)['id'];
 
         $newFileName = 'new_file_name.txt';
         $clientUpdateName = $this->createClient();
@@ -255,7 +255,7 @@ class ControllerProviderTest extends WebTestCase
             ['upload_file' => $fileUpload]);
         $response = $clientCreate->getResponse();
         $content = $response->getContent();
-        $newFileId = json_decode($content, true)['ID'];
+        $newFileId = json_decode($content, true)['id'];
 
         copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
             ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla2.htm");

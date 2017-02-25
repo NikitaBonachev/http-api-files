@@ -44,7 +44,7 @@ class FilesStorage
 
         $prevFile = $dataProvider->getOneFile($id);
 
-        if ($prevFile['ID'] > 0) {
+        if ($prevFile['id'] > 0) {
             $path = ConfigProvider::getUploadDir($app['env']);
 
             if (file_exists($path . $prevFile['file_name'])
@@ -54,8 +54,11 @@ class FilesStorage
             }
 
             $newFileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
-            $result = $dataProvider->updateFile($id, $prevFile['original_name'],
-                $newFileName);
+            $result = $dataProvider->updateFile(
+                $id,
+                $prevFile['original_name'],
+                $newFileName
+            );
 
             $file->move($path, $newFileName);
         }
@@ -139,7 +142,7 @@ class FilesStorage
 
         $filePath = ConfigProvider::getUploadDir($app['env']) . $result['file_name'];
 
-        if (!file_exists($filePath) || $result['ID'] == 0) {
+        if (!file_exists($filePath) || $result['id'] == 0) {
             return $app->abort(404);
         } else {
 

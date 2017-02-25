@@ -79,8 +79,8 @@ class DataManagerTest extends TestCase
         $list = $dataProvider->getFilesList();
 
         foreach ($list as $file) {
-            if ($file['ID'] == $id) {
-                $this->assertTrue($file['original_name'] == $originalName);
+            if ($file['id'] == $id) {
+                $this->assertTrue($file['name'] == $originalName);
             }
         }
     }
@@ -94,8 +94,8 @@ class DataManagerTest extends TestCase
         $list = $dataProvider->getFilesList();
 
         foreach ($list as $file) {
-            if ($file['ID'] == $id) {
-                $this->assertTrue($file['original_name'] == $originalName);
+            if ($file['id'] == $id) {
+                $this->assertTrue($file['name'] == $originalName);
             }
         }
 
@@ -103,7 +103,7 @@ class DataManagerTest extends TestCase
         $list = $dataProvider->getFilesList();
         $wasDeleted = true;
         foreach ($list as $file) {
-            if ($file['ID'] == $id) {
+            if ($file['id'] == $id) {
                 $wasDeleted = true;
             }
         }
@@ -120,7 +120,7 @@ class DataManagerTest extends TestCase
         $id = $dataProvider->addNewFile($originalName, $fileName);
         $getOne = $dataProvider->getOneFile($id);
         $this->assertTrue(
-            $getOne['ID'] == $id
+            $getOne['id'] == $id
             && $getOne['original_name'] == $originalName
             && $getOne['file_name'] == $fileName
         );
@@ -140,7 +140,7 @@ class DataManagerTest extends TestCase
 
         $getFile = $dataProvider->getOneFile($id);
         $this->assertTrue(
-            $getFile['ID'] == $id
+            $getFile['id'] == $id
             && $getFile['original_name'] == $newOriginalName
             && $getFile['file_name'] == $oldFileName
         );
@@ -152,7 +152,7 @@ class DataManagerTest extends TestCase
 
         $getFile = $dataProvider->getOneFile($id);
         $this->assertTrue(
-            $getFile['ID'] == $id
+            $getFile['id'] == $id
             && $getFile['original_name'] == $newOriginalName2
             && $getFile['file_name'] == $newFileName
         );

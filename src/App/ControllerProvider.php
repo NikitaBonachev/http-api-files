@@ -116,7 +116,7 @@ class ControllerProvider implements ControllerProviderInterface
     public function uploadNewFile(App $app, Request $request)
     {
         $files = $request->files->get('upload_file');
-        $result['ID'] = FilesStorage::createFile($files, $app);
+        $result['id'] = FilesStorage::createFile($files, $app);
         return $app->json($result, Response::HTTP_CREATED);
     }
 
@@ -186,7 +186,7 @@ class ControllerProvider implements ControllerProviderInterface
     {
         switch ($code) {
             case Response::HTTP_NOT_FOUND:
-                $message = 'The requested page could not be found.';
+                $message = 'The requested resource could not be found.';
                 break;
             default:
                 $message = $e . 'We are sorry, but something went terribly wrong.';
