@@ -190,12 +190,12 @@ class ControllerProviderTest extends WebTestCase
         $newFileId = json_decode($content, true)['id'];
 
         $clientDelete = $this->createClient();
-        $clientDelete->request('delete', '/files/' . $newFileId);
+        $clientDelete->request('DELETE', '/files/' . $newFileId);
         $response = $clientDelete->getResponse();
         $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_NO_CONTENT);
 
         $clientDeleteAgain = $this->createClient();
-        $clientDeleteAgain->request('delete', '/files/' . $newFileId);
+        $clientDeleteAgain->request('DELETE', '/files/' . $newFileId);
         $response = $clientDeleteAgain->getResponse();
         $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_NOT_FOUND);
     }
