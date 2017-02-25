@@ -168,7 +168,19 @@ class ControllerProvider implements ControllerProviderInterface
         $file = $request->files->get('upload_file');
         if (ApiUtils::checkRequestFile($file)) {
             $result['id'] = FilesStorage::createFile($file, $app);
-            return $app->json($result, Response::HTTP_CREATED);
+
+            if ($result['id'] == -1) {
+                return $app->json(
+                    [
+                        "code" => Response::HTTP_BAD_REQUEST,
+                        "message" => "File with this name already exists",
+                        "request" => ""
+                    ],
+                    Response::HTTP_NOT_FOUND
+                );
+            } else {
+                return $app->json($result, Response::HTTP_CREATED);
+            }
         } else {
             return $app->json(
                 [
@@ -213,6 +225,17 @@ class ControllerProvider implements ControllerProviderInterface
      */
     public function getFileMeta(App $app, $id)
     {
+        $id = ApiUtils::checkRequestId($id);
+        if (!$id) {
+            return $app->json(
+                [
+                    "code" => Response::HTTP_BAD_REQUEST,
+                    "message" => "File valid ID",
+                    "request" => ""
+                ],
+                Response::HTTP_NOT_FOUND
+            );
+        }
         $fileMeta = FilesStorage::getFileMeta($id, $app);
         return $app->json($fileMeta);
     }

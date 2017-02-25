@@ -143,8 +143,8 @@ class ControllerProviderTest extends WebTestCase
     public function testGetOneFileMeta()
     {
         copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
-            ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla1.htm");
-        $fileUploadPath = ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla1.htm";
+            ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla4.htm");
+        $fileUploadPath = ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla4.htm";
         $fileUpload = new UploadedFile(
             $fileUploadPath,
             $fileUploadPath,

@@ -77,7 +77,7 @@ class DataManager
      * @param $name
      * @return bool
      */
-    private function getFileByName($name)
+    public function getFileByName($name)
     {
         $db = $this->db;
         $filesTable = $this->filesTableName;

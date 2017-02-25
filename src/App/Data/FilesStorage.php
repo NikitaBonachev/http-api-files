@@ -18,14 +18,24 @@ class FilesStorage
      */
     public static function createFile($file, App $app)
     {
-        $path = ConfigProvider::getUploadDir($app['env']);
-        $originalName = $file->getClientOriginalName();
-
-        $fileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
-        $file->move($path, $fileName);
         $db = $app['db'];
         $dataProvider = new DataManager($db);
+        $originalName = $file->getClientOriginalName();
 
+        $result = $dataProvider->getFileByName($originalName);
+
+        if ($result > 0) {
+            return -1;
+        }
+
+        $path = ConfigProvider::getUploadDir($app['env']);
+        if ($file->getClientOriginalExtension()) {
+            $fileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
+        } else {
+            $fileName = strval(Uuid::uuid1());
+        }
+
+        $file->move($path, $fileName);
         return $dataProvider->addNewFile($originalName, $fileName);
     }
 
