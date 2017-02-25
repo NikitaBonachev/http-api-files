@@ -45,7 +45,7 @@ class ControllerProvider implements ControllerProviderInterface
 
         // Update file
         $controllers
-            ->post('/files/{id}', [$this, 'updateFile']);
+            ->post('/files/{id}/content', [$this, 'updateFile']);
 
         // Update file name
         $controllers

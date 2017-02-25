@@ -318,7 +318,7 @@ class ControllerProviderTest extends WebTestCase
         );
 
         $clientCreate = $this->createClient();
-        $clientCreate->request('POST', '/files/' . $newFileId, [],
+        $clientCreate->request('POST', '/files/' . $newFileId . '/content', [],
             ['upload_file' => $fileUpload]);
         $response = $clientCreate->getResponse();
         $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_OK);
