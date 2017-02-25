@@ -74,7 +74,6 @@ class DataManager
     /**
      * @param string $originalName
      * @param string $fileName
-     * @param string $fileExtension
      *
      * @return bool
      */

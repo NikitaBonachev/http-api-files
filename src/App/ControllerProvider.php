@@ -217,7 +217,7 @@ class ControllerProvider implements ControllerProviderInterface
                 $message = 'The requested resource could not be found.';
                 break;
             default:
-                $message = $e . 'We are sorry, but something went terribly wrong.';
+                $message = $e->getMessage();
         }
 
         return $this->app->json(
