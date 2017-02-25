@@ -106,21 +106,29 @@ class ControllerProvider implements ControllerProviderInterface
     {
         $newName = json_decode($request->getContent(), true)['name'];
         $result = FilesStorage::updateFileName($id, $newName, $app);
+
         if ($result > 0) {
+
             return $app->json(['id' => $id], Response::HTTP_OK);
+
         } elseif ($result == -1 ) {
+
             $errorResponse = [
                 "code" => Response::HTTP_NOT_FOUND,
                 "message" => "File with this id not found. Id = " . $id,
                 "request" => $request->getContent()
             ];
+
             return $app->json($errorResponse, Response::HTTP_BAD_REQUEST);
+
         } else {
+
             $errorResponse = [
                 "code" => Response::HTTP_BAD_REQUEST,
                 "message" => "File with this name already exists",
                 "request" => $request->getContent()
             ];
+
             return $app->json($errorResponse, Response::HTTP_BAD_REQUEST);
         }
     }
@@ -170,7 +178,7 @@ class ControllerProvider implements ControllerProviderInterface
      * @param $id
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getOneFileMeta(App $app, $id)
+    public function getFileMeta(App $app, $id)
     {
         $fileMeta = FilesStorage::getFileMeta($id, $app);
         return $app->json($fileMeta);
