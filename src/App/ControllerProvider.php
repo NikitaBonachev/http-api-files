@@ -197,7 +197,13 @@ class ControllerProvider implements ControllerProviderInterface
         if (FilesStorage::deleteFile($id, $app) == 1) {
             return new Response('', Response::HTTP_NO_CONTENT);
         } else {
-            return new Response('', Response::HTTP_NOT_FOUND);
+            return $app->json(
+                [
+                    "code" => Response::HTTP_NOT_FOUND,
+                    "message" => "The requested resource could not be found",
+                    "request" => ""
+                ]
+            );
         }
     }
 
