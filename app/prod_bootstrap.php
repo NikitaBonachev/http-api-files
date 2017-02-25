@@ -17,3 +17,5 @@ $app->register(
         'db.options' => \App\Config\ConfigProvider::getDatabaseConfig($app_env)
     ]
 );
+
+return [$app, $loader];
