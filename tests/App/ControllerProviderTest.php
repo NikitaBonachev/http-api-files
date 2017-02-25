@@ -203,6 +203,7 @@ class ControllerProviderTest extends WebTestCase
 
     public function testUpdateFileName()
     {
+        // Create file
         copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
             ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla3.htm");
         $fileUploadPath = ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla3.htm";
@@ -215,6 +216,7 @@ class ControllerProviderTest extends WebTestCase
             true
         );
 
+        //Upload file
         $clientCreate = $this->createClient();
         $clientCreate->request('POST', '/files', [],
             ['upload_file' => $fileUpload]);
@@ -222,6 +224,7 @@ class ControllerProviderTest extends WebTestCase
         $content = $response->getContent();
         $newFileId = json_decode($content, true)['id'];
 
+        //Update file name
         $newFileName = 'new_file_name.txt';
         $clientUpdateName = $this->createClient();
         $clientUpdateName->request(
@@ -229,10 +232,56 @@ class ControllerProviderTest extends WebTestCase
             '/files/' . $newFileId . '/name',
             [],
             [],
-            ['name' => $newFileName]
+            [],
+            json_encode(['name' => $newFileName])
         );
         $response = $clientUpdateName->getResponse();
         $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_OK);
+
+        //Update file name with wrong Id
+        $clientUpdateWrongId = $this->createClient();
+        $clientUpdateWrongId->request(
+            'PUT',
+            '/files/' . 1334 . '/name',
+            [],
+            [],
+            [],
+            json_encode(['name' => $newFileName])
+        );
+        $response = $clientUpdateWrongId->getResponse();
+        $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_NOT_FOUND);
+
+        // Create file
+        $nameAlreadyExist = 'alreadyExist.txt';
+        copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
+            ConfigProvider::getUploadDir($this->app['env']) . "create/" . $nameAlreadyExist);
+        $fileUploadPath = ConfigProvider::getUploadDir($this->app['env']) . "create/" . $nameAlreadyExist;
+        $fileUpload = new UploadedFile(
+            $fileUploadPath,
+            $fileUploadPath,
+            null,
+            null,
+            null,
+            true
+        );
+
+        //Upload file
+        $clientCreate = $this->createClient();
+        $clientCreate->request('POST', '/files', [],
+            ['upload_file' => $fileUpload]);
+
+        //Update file name with wrong name
+        $clientUpdateWrongName = $this->createClient();
+        $clientUpdateWrongName->request(
+            'PUT',
+            '/files/' . $newFileId . '/name',
+            [],
+            [],
+            [],
+            json_encode(['name' => $nameAlreadyExist])
+        );
+        $response = $clientUpdateWrongName->getResponse();
+        $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_BAD_REQUEST);
     }
 
 

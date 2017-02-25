@@ -119,7 +119,7 @@ class ControllerProvider implements ControllerProviderInterface
                 "request" => $request->getContent()
             ];
 
-            return $app->json($errorResponse, Response::HTTP_BAD_REQUEST);
+            return $app->json($errorResponse, Response::HTTP_NOT_FOUND);
 
         } else {
 
