@@ -47,8 +47,7 @@ class DataManager
                 id INT(11) NOT NULL AUTO_INCREMENT,
                 original_name CHAR(250) NOT NULL,
                 file_name CHAR(250) NOT NULL,
-                file_extension CHAR(10),
-                PRIMARY KEY(ID)
+                PRIMARY KEY(id)
             )
         ;";
 
@@ -79,12 +78,12 @@ class DataManager
      *
      * @return bool
      */
-    public function addNewFile($originalName, $fileName, $fileExtension = "")
+    public function addNewFile($originalName, $fileName)
     {
         $filesTable = $this->filesTableName;
         $createFileQueryText = "INSERT INTO $filesTable 
-        (original_name, file_name, file_extension) VALUES 
-        ('$originalName', '$fileName', '$fileExtension');";
+        (original_name, file_name) VALUES 
+        ('$originalName', '$fileName');";
 
         $db = $this->db;
 
@@ -103,7 +102,7 @@ class DataManager
         $arFiles = [];
 
         $filesTable = $this->filesTableName;
-        $filesQueryText = "SELECT id, original_name as name, file_extension from $filesTable;";
+        $filesQueryText = "SELECT id, original_name as name from $filesTable;";
 
         $db = $this->db;
         $query = $db->prepare($filesQueryText);
