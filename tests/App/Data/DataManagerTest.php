@@ -156,6 +156,17 @@ class DataManagerTest extends TestCase
             && $getFile['original_name'] == $newOriginalName2
             && $getFile['file_name'] == $newFileName
         );
+
+        // Update with non exist Id
+        $result = $dataProvider->updateFile(99999, $newOriginalName2, $newFileName);
+        $this->assertTrue($result == -1);
+
+        // Update file with already exist name
+        $alreadyExistName = 'alreadyExist.txt';
+        $dataProvider = self::getDataProvider();
+        $dataProvider->addNewFile($alreadyExistName, $alreadyExistName);
+        $result = $dataProvider->updateFile($id, $alreadyExistName);
+        $this->assertTrue($result == 0);
     }
 
 

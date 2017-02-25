@@ -147,11 +147,15 @@ class DataManager
      *
      * @return integer
      */
-    public function updateFile($id, $newOriginalName = null, $newFileName = null)
-    {
+    public function updateFile(
+        $id,
+        $newOriginalName = null,
+        $newFileName = null
+    ) {
         $filesTable = $this->filesTableName;
         $db = $this->db;
 
+        // Check if file exists
         $checkFileExist = "SELECT id FROM $filesTable WHERE id = $id";
         $queryCheckExist = $db->prepare($checkFileExist);
         $queryCheckExist->execute();
@@ -160,13 +164,18 @@ class DataManager
             return -1;
         }
 
-        $lowerCaseOriginalName = strtolower($newOriginalName);
-        $checkFileNameQueryText = "SELECT id FROM $filesTable WHERE LOWER(original_name) = '$lowerCaseOriginalName'";
+        // Check if file with the same name exists
+        $foundIdWithSameName = 0;
+        if ($newOriginalName) {
+            $lowerCaseOriginalName = strtolower($newOriginalName);
+            $checkFileNameQueryText = "SELECT id FROM $filesTable 
+                WHERE LOWER(original_name) = '$lowerCaseOriginalName'";
 
-        $queryCheckName = $db->prepare($checkFileNameQueryText);
-        $queryCheckName->execute();
+            $queryCheckName = $db->prepare($checkFileNameQueryText);
+            $queryCheckName->execute();
 
-        $foundIdWithSameName = $queryCheckName->fetch()['id'];
+            $foundIdWithSameName = $queryCheckName->fetch()['id'];
+        }
 
         if ($foundIdWithSameName != $id && $foundIdWithSameName > 0) {
             return 0;
