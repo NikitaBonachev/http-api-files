@@ -25,6 +25,12 @@ class ControllerProviderTest extends WebTestCase
     }
 
 
+    /**
+     * Delete test directory
+     *
+     * @param $dir
+     * @return bool
+     */
     private function deleteDirectory($dir)
     {
         if (!file_exists($dir)) {
@@ -50,6 +56,40 @@ class ControllerProviderTest extends WebTestCase
     }
 
 
+    /**
+     * Generate a new file for tests
+     *
+     * @param $name
+     * @return UploadedFile
+     */
+    private function generateFileForTest($name)
+    {
+        $uploadDir = ConfigProvider::getUploadDir($this->app['env']);
+
+        copy(
+            __DIR__ . '/Data/TestFiles/Xsolla.htm',
+            $uploadDir . "create/" . $name
+        );
+
+        $fileUploadPath = $uploadDir . "create/" . $name;
+
+        $fileUpload = new UploadedFile(
+            $fileUploadPath,
+            $fileUploadPath,
+            null,
+            null,
+            null,
+            true
+        );
+
+        return $fileUpload;
+    }
+
+    /**
+     * Create application
+     *
+     * @return mixed
+     */
     public function createApplication()
     {
         $this->app = require __DIR__ . '/../test_bootstrap.php';
@@ -74,8 +114,11 @@ class ControllerProviderTest extends WebTestCase
         $client->request('GET', '/');
         $response = $client->getResponse();
         $content = $response->getContent();
+
         $this->assertJson($content);
-        $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_NOT_FOUND);
+        $this->assertTrue(
+            $response->getStatusCode() == HTTPResponse::HTTP_NOT_FOUND
+        );
     }
 
 
@@ -84,50 +127,36 @@ class ControllerProviderTest extends WebTestCase
         $controllerProvider = new ControllerProvider();
         $response = $controllerProvider->getFiles($this->app);
         $content = $response->getContent();
+
         $this->assertJson($content);
-        $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_OK);
+        $this->assertTrue(
+            $response->getStatusCode() == HTTPResponse::HTTP_OK
+        );
     }
 
 
     public function testUploadNewFile()
     {
-        copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
-            ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla.htm");
-        $fileUploadPath = ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla.htm";
-        $fileUpload = new UploadedFile(
-            $fileUploadPath,
-            $fileUploadPath,
-            null,
-            null,
-            null,
-            true
-        );
+        $fileUpload = self::generateFileForTest('testUploadNewFile.htm');
 
         $client = $this->createClient();
         $client->request('POST', '/files', [], ['upload_file' => $fileUpload]);
         $response = $client->getResponse();
         $content = $response->getContent();
-        $this->assertJson($content);
 
+        $this->assertJson($content);
         $this->assertTrue(json_decode($content, true)['id'] > 0);
-        $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_CREATED);
+        $this->assertTrue(
+            $response->getStatusCode() == HTTPResponse::HTTP_CREATED
+        );
     }
 
 
     public function testGetOneFile()
     {
-        copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
-            ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla1.htm");
-        $fileUploadPath = ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla1.htm";
-        $fileUpload = new UploadedFile(
-            $fileUploadPath,
-            $fileUploadPath,
-            null,
-            null,
-            null,
-            true
-        );
+        $fileUpload = self::generateFileForTest('testGetOneFile.htm');
 
+        // Upload file
         $clientCreate = $this->createClient();
         $clientCreate->request('POST', '/files', [],
             ['upload_file' => $fileUpload]);
@@ -135,6 +164,7 @@ class ControllerProviderTest extends WebTestCase
         $content = $response->getContent();
         $newFileId = json_decode($content, true)['id'];
 
+        // Get file
         $clientGet = $this->createClient();
         $clientGet->request('GET', '/files/' . $newFileId);
         $response = $clientGet->getResponse();
@@ -144,18 +174,9 @@ class ControllerProviderTest extends WebTestCase
 
     public function testGetOneFileMeta()
     {
-        copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
-            ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla4.htm");
-        $fileUploadPath = ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla4.htm";
-        $fileUpload = new UploadedFile(
-            $fileUploadPath,
-            $fileUploadPath,
-            null,
-            null,
-            null,
-            true
-        );
+        $fileUpload = self::generateFileForTest('getOneFileMeta.html');
 
+        // Upload file
         $clientCreate = $this->createClient();
         $clientCreate->request('POST', '/files', [],
             ['upload_file' => $fileUpload]);
@@ -163,6 +184,7 @@ class ControllerProviderTest extends WebTestCase
         $content = $response->getContent();
         $newFileId = json_decode($content, true)['id'];
 
+        // Get meta
         $clientGet = $this->createClient();
         $clientGet->request('GET', '/files/' . $newFileId . '/meta');
         $response = $clientGet->getResponse();
@@ -172,18 +194,9 @@ class ControllerProviderTest extends WebTestCase
 
     public function testGetDeleteFile()
     {
-        copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
-            ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla2.htm");
-        $fileUploadPath = ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla2.htm";
-        $fileUpload = new UploadedFile(
-            $fileUploadPath,
-            $fileUploadPath,
-            null,
-            null,
-            null,
-            true
-        );
+        $fileUpload = self::generateFileForTest('deleteFile.html');
 
+        // Upload file
         $clientCreate = $this->createClient();
         $clientCreate->request('POST', '/files', [],
             ['upload_file' => $fileUpload]);
@@ -191,11 +204,13 @@ class ControllerProviderTest extends WebTestCase
         $content = $response->getContent();
         $newFileId = json_decode($content, true)['id'];
 
+        // Delete once
         $clientDelete = $this->createClient();
         $clientDelete->request('DELETE', '/files/' . $newFileId);
         $response = $clientDelete->getResponse();
         $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_NO_CONTENT);
 
+        // Delete twice
         $clientDeleteAgain = $this->createClient();
         $clientDeleteAgain->request('DELETE', '/files/' . $newFileId);
         $response = $clientDeleteAgain->getResponse();
@@ -206,17 +221,7 @@ class ControllerProviderTest extends WebTestCase
     public function testUpdateFileName()
     {
         // Create file
-        copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
-            ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla3.htm");
-        $fileUploadPath = ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla3.htm";
-        $fileUpload = new UploadedFile(
-            $fileUploadPath,
-            $fileUploadPath,
-            null,
-            null,
-            null,
-            true
-        );
+        $fileUpload = self::generateFileForTest('updateFileName.html');
 
         //Upload file
         $clientCreate = $this->createClient();
@@ -253,19 +258,9 @@ class ControllerProviderTest extends WebTestCase
         $response = $clientUpdateWrongId->getResponse();
         $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_NOT_FOUND);
 
-        // Create file
+        // Create file with name already exist
         $nameAlreadyExist = 'alreadyExist.txt';
-        copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
-            ConfigProvider::getUploadDir($this->app['env']) . "create/" . $nameAlreadyExist);
-        $fileUploadPath = ConfigProvider::getUploadDir($this->app['env']) . "create/" . $nameAlreadyExist;
-        $fileUpload = new UploadedFile(
-            $fileUploadPath,
-            $fileUploadPath,
-            null,
-            null,
-            null,
-            true
-        );
+        $fileUpload = self::generateFileForTest($nameAlreadyExist);
 
         //Upload file
         $clientCreate = $this->createClient();
@@ -289,18 +284,8 @@ class ControllerProviderTest extends WebTestCase
 
     public function testUpdateFile()
     {
-        copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
-            ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla2.htm");
-        $fileUploadPath = ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla2.htm";
-        $fileUpload = new UploadedFile(
-            $fileUploadPath,
-            $fileUploadPath,
-            null,
-            null,
-            null,
-            true
-        );
-
+        // Create and upload
+        $fileUpload = self::generateFileForTest('updateFile.htm');
         $clientCreate = $this->createClient();
         $clientCreate->request('POST', '/files', [],
             ['upload_file' => $fileUpload]);
@@ -308,17 +293,8 @@ class ControllerProviderTest extends WebTestCase
         $content = $response->getContent();
         $newFileId = json_decode($content, true)['id'];
 
-        copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
-            ConfigProvider::getUploadDir($this->app['env']) . "create/Xsolla2.htm");
-        $fileUpload = new UploadedFile(
-            $fileUploadPath,
-            $fileUploadPath,
-            null,
-            null,
-            null,
-            true
-        );
-
+        // Create and update
+        $fileUpload = self::generateFileForTest('updateFile2.htm');
         $clientCreate = $this->createClient();
         $clientCreate->request('POST', '/files/' . $newFileId . '/content', [],
             ['upload_file' => $fileUpload]);
