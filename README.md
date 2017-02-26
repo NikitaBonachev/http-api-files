@@ -3,7 +3,7 @@
 ## Deploy
 
 The project contains a ready for use Docker (for Mac users, I didn't test it on another OS).
-Just do 
+Just do:
 
 ```
 git clone https://github.com/NikitaBonachev/xsolla-test.git
@@ -21,7 +21,7 @@ Docker will setup a container with Apache and MySQL.
  I've created a documentation on [Postman](https://documenter.getpostman.com/collection/view/1593302-997f6d66-aa8c-df96-328f-8277a759aee5), you can use examples from it.
  Please, be careful with POST-requests from Postman-examples.  
  
- For example, this request from Postman doesn't work properly
+ For instance, this request from Postman doesn't work properly:
  
  ```
 curl --request POST \
@@ -29,7 +29,7 @@ curl --request POST \
   --header 'content-type: multipart/form-data; boundary=---011000010111000001101001' \
   --form 'upload_file=@test.txt'
 ```
- And this works well
+ But this one works well:
  
   ```
  curl --request POST \
@@ -39,13 +39,15 @@ curl --request POST \
  ```
 ### Methods
  
- * Get list of files
- ```
+* **Get list of files**
+
+```
 GET /files
 ```
+
 Return list of files on the server.
-Example response:
-  ```
+Response example:
+```
  {
    "list": [
      {
@@ -59,7 +61,9 @@ Example response:
    ]
  }
  ```
+ 
  * **Get one file by ID**
+ 
  ```
 GET /files/{{id}}
 ```
@@ -70,7 +74,7 @@ Return a file.
 GET /files/{{id}}/meta
 ```
 Return meta-data of file.
-Example response:
+Response example:
 ```
 {
     "name": "image.png",
@@ -91,12 +95,12 @@ Body:
 upload_file: file
 ```
 Return ID of new file.
-Example response:
+Response example:
 ```
 {"id":"3"}
 ```
 * **Update file by ID.**
-This method update only content of a file. The name will be the same (may be it's a little bit wrong to use POST here). 
+This method updates only content of a file. The name will be the same (perhaps it's a little bit wrong to use POST here). 
 ```
 POST /files/{{id}}/content
 Headers:
@@ -119,7 +123,7 @@ Body:
 }
 ```
 Return ID of file.
-Example response:
+Response example:
  ```
 {"id":"1"}
 ```
@@ -132,7 +136,7 @@ Return nothing.
  
 ### Errors
 
-Errors has following format 
+Errors have the following format:
 
 ```
 {
@@ -145,7 +149,7 @@ Errors has following format
 ## Testing
  
  PHPUnit tests use a local database on your computer, please, write its settings on `config.php` (lines 12-15).
- Then, on terminal from your local machine
+ Then, on the terminal from your local machine:
   ```
   phpunit --coverage-html log/coverage
  ```

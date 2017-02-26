@@ -101,7 +101,7 @@ class ControllerProvider implements ControllerProviderInterface
         if ($file instanceof UploadedFile && $id) {
 
             // Try to update
-            $result['id'] = FilesStorage::updateFile($file, $id, $app);
+            $result['id'] = intval(FilesStorage::updateFile($file, $id, $app));
             if ($result['id'] == 0) {
 
                 return $app->json(
@@ -161,7 +161,7 @@ class ControllerProvider implements ControllerProviderInterface
 
         if ($result > 0) {
             // Success update file name
-            return $app->json(['id' => $id], Response::HTTP_OK);
+            return $app->json(['id' => intval($id)], Response::HTTP_OK);
 
         } elseif ($result == -1) {
 
@@ -201,7 +201,7 @@ class ControllerProvider implements ControllerProviderInterface
 
         if ($file instanceof UploadedFile) {
 
-            $result['id'] = FilesStorage::createFile($file, $app);
+            $result['id'] = intval(FilesStorage::createFile($file, $app));
             if ($result['id'] == -1) {
                 // Wrong file name
                 return $app->json(
