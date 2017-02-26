@@ -8,14 +8,26 @@ use PHPUnit\Framework\TestCase;
 use App\Data\FilesStorage as FilesStorage;
 use App\Data\DataManager as DataManager;
 
+/**
+ * Class FilesStorageTest
+ */
 class FilesStorageTest extends TestCase
 {
+    /**
+     * @return \Silex\Application
+     */
     private function getApp()
     {
         return require __DIR__ . '/../../test_bootstrap.php';
     }
 
 
+    /**
+     * Delete upload_test directory
+     *
+     * @param $dir
+     * @return bool
+     */
     private function deleteDirectory($dir)
     {
         if (!file_exists($dir)) {
@@ -41,14 +53,35 @@ class FilesStorageTest extends TestCase
     }
 
 
+    /**
+     * Return upload dir
+     *
+     * @return array
+     */
+    private function uploadDir()
+    {
+        return ConfigProvider::getUploadDir($this->getApp()['env']);
+    }
+
+
+    /**
+     * Create UploadedFile file for tests
+     *
+     * @param $originalName
+     * @return UploadedFile
+     */
     private function createUploadFile($originalName)
     {
         $content = "some content here";
         $newFileOriginalName = $originalName;
-        $newFilePath = ConfigProvider::getUploadDir($this->getApp()['env']) . "create/" . $newFileOriginalName;
+
+        $newFilePath = self::uploadDir();
+        $newFilePath .= "create/" . $newFileOriginalName;
+
         $fp = fopen($newFilePath, "wb");
         fwrite($fp, $content);
         fclose($fp);
+
         return new UploadedFile(
             $newFilePath,
             $newFileOriginalName,
@@ -64,18 +97,20 @@ class FilesStorageTest extends TestCase
     {
         parent::setUp();
         date_default_timezone_set('Asia/Yekaterinburg');
-        self::deleteDirectory(ConfigProvider::getUploadDir($this->getApp()['env']));
-        if (!is_dir(ConfigProvider::getUploadDir($this->getApp()['env']))) {
-            mkdir(ConfigProvider::getUploadDir($this->getApp()['env']));
+        self::deleteDirectory(self::uploadDir());
+
+        if (!is_dir(self::uploadDir())) {
+            mkdir(self::uploadDir());
         }
-        mkdir(ConfigProvider::getUploadDir($this->getApp()['env']) . 'create');
+
+        mkdir(self::uploadDir() . 'create');
     }
 
 
     protected function tearDown()
     {
         parent::tearDown();
-        self::deleteDirectory(ConfigProvider::getUploadDir($this->getApp()['env']));
+        self::deleteDirectory(self::uploadDir());
         $app = $this->getApp();
         $db = $app['db'];
         $dataProvider = new DataManager($db);
@@ -84,6 +119,12 @@ class FilesStorageTest extends TestCase
     }
 
 
+    /**
+     * Get private method for tests
+     *
+     * @param $name
+     * @return \ReflectionMethod
+     */
     protected static function getMethod($name)
     {
         $class = new \ReflectionClass('App\Data\DataManager');
@@ -95,9 +136,15 @@ class FilesStorageTest extends TestCase
 
     public function testCreateFile()
     {
+        // Try to create file
         $newFile = self::createUploadFile('new.txt');
         $id = FilesStorage::createFile($newFile, $this->getApp());
         $this->assertTrue($id > 0);
+
+        // Try to create file with same name
+        $newFile = self::createUploadFile('new.txt');
+        $id = FilesStorage::createFile($newFile, $this->getApp());
+        $this->assertFalse($id > 0);
     }
 
 
@@ -106,7 +153,7 @@ class FilesStorageTest extends TestCase
         $newFile = self::createUploadFile('newFile.txt');
         $id = FilesStorage::createFile($newFile, $this->getApp());
         $newFileUpdate = self::createUploadFile('newUpdate.txt');
-        $result = FilesStorage::updateFile($newFileUpdate, $id, self::getApp());
+        $result = FilesStorage::updateFile($newFileUpdate, $id, $this->getApp());
         $this->assertTrue($result > 0);
     }
 
@@ -117,8 +164,12 @@ class FilesStorageTest extends TestCase
         $newName = 'newName.txt';
         $newFile = self::createUploadFile($oldName);
         $id = FilesStorage::createFile($newFile, $this->getApp());
-        $resultUpdate = FilesStorage::updateFileName($id, $newName,
-            $this->getApp());
+
+        $resultUpdate = FilesStorage::updateFileName(
+            $id,
+            $newName,
+            $this->getApp()
+        );
 
         $testUpdate = FilesStorage::getFile($id, $this->getApp());
 
@@ -133,6 +184,7 @@ class FilesStorageTest extends TestCase
         $newFile = self::createUploadFile($newFileName);
         $id = FilesStorage::createFile($newFile, $this->getApp());
         $getFile = FilesStorage::getFile($id, $this->getApp());
+
         $this->assertTrue(
             $newFileName == $getFile['originalName']
         );
@@ -157,26 +209,20 @@ class FilesStorageTest extends TestCase
         $newFile = self::createUploadFile($newFileName);
         $id = FilesStorage::createFile($newFile, $this->getApp());
 
-        $this->assertTrue(FilesStorage::deleteFile($id, $this->getApp()) > 0);
+        $this->assertTrue(
+            FilesStorage::deleteFile($id, $this->getApp()) > 0
+        );
         $this->expectException(FilesStorage::getFile($id, $this->getApp()));
     }
 
 
     public function testGetFileMeta()
     {
-        copy(__DIR__ . '/TestFiles/Xsolla.htm',
-            ConfigProvider::getUploadDir($this->getApp()['env']) . "create/Xsolla.htm");
-        $newFile = new UploadedFile(
-            ConfigProvider::getUploadDir($this->getApp()['env']) . "create/Xsolla.htm",
-            ConfigProvider::getUploadDir($this->getApp()['env']) . "create/Xsolla.htm",
-            null,
-            null,
-            null,
-            true
-        );
+        $newFile = self::createUploadFile('Xsolla.htm');
         $id = FilesStorage::createFile($newFile, $this->getApp());
-        $this->assertTrue(is_array(FilesStorage::getFileMeta($id,
-            $this->getApp())));
+        $this->assertTrue(
+            is_array(FilesStorage::getFileMeta($id, $this->getApp()))
+        );
     }
 
 
@@ -185,7 +231,8 @@ class FilesStorageTest extends TestCase
      */
     public function testWrongGetFileMeta()
     {
-        $this->assertTrue(is_array(FilesStorage::getFileMeta(777777,
-            $this->getApp())));
+        $this->assertTrue(
+            is_array(FilesStorage::getFileMeta(777777, $this->getApp()))
+        );
     }
 }
