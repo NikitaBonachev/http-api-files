@@ -14,7 +14,7 @@ docker-compose run app
 Docker will setup a container with Apache and MySQL.
  
 ###note
- File `config.php` contains settings for databases (dev and test). 
+ File `config.php` contains configuration for databases (dev and test). 
  If you would like to change something in  `config.php` be sure, that `docker-compose.yml` has the same changes.
  
 ## API Documentation
@@ -45,7 +45,7 @@ curl --request POST \
 GET /files
 ```
 
-Return list of files on the server.
+Return the list of files on the server.
 Response example:
 ```
  {
@@ -64,13 +64,13 @@ Response example:
  
  * **Get one file by ID**
  
- ```
+```
 GET /files/{{id}}
 ```
 Return a file.
 
- * Get meta-data of file
- ```
+ * **Get meta-data of a file**
+```
 GET /files/{{id}}/meta
 ```
 Return meta-data of file.
@@ -99,7 +99,7 @@ Response example:
 ```
 {"id":"3"}
 ```
-* **Update file by ID.**
+* **Update a file by ID.**
 This method updates only content of a file. The name will be the same (perhaps it's a little bit wrong to use POST here). 
 ```
 POST /files/{{id}}/content
@@ -113,8 +113,8 @@ Example response:
  ```
 {"id":"2"}
 ```
-* **Update file name by ID.**
-Update only the name of file. 
+* **Update a file name by ID.**
+Update only the name of the file. 
 ```
 PUT /files/{{id}}/name
 Body:
