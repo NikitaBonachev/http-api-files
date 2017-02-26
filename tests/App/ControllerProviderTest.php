@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Response as HTTPResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Config\ConfigProvider as ConfigProvider;
 
+/**
+ * Class ControllerProviderTest
+ */
 class ControllerProviderTest extends WebTestCase
 {
     protected $app;

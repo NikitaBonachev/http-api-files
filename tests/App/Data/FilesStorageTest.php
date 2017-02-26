@@ -153,7 +153,13 @@ class FilesStorageTest extends TestCase
         $newFile = self::createUploadFile('newFile.txt');
         $id = FilesStorage::createFile($newFile, $this->getApp());
         $newFileUpdate = self::createUploadFile('newUpdate.txt');
-        $result = FilesStorage::updateFile($newFileUpdate, $id, $this->getApp());
+
+        $result = FilesStorage::updateFile(
+            $newFileUpdate,
+            $id,
+            $this->getApp()
+        );
+
         $this->assertTrue($result > 0);
     }
 

@@ -9,6 +9,9 @@ use App\Config\ConfigProvider as ConfigProvider;
 
 require __DIR__ . '/../test_bootstrap.php';
 
+/**
+ * Class ApiUtilsTest
+ */
 class ApiUtilsTest extends TestCase
 {
     public function testCheckRequestFiles()
@@ -18,10 +21,13 @@ class ApiUtilsTest extends TestCase
 
         $app = require __DIR__ . '/../test_bootstrap.php';
 
-        copy(__DIR__ . '/Data/TestFiles/Xsolla.htm',
-            ConfigProvider::getUploadDir($app['env']) . "apiTest.htm");
+        copy(
+            __DIR__ . '/Data/TestFiles/Xsolla.htm',
+            ConfigProvider::getUploadDir($app['env']) . "apiTest.htm"
+        );
 
         $fileUploadPath = ConfigProvider::getUploadDir($app['env']) . "apiTest.htm";
+
         $fileUpload = new UploadedFile(
             $fileUploadPath,
             $fileUploadPath,

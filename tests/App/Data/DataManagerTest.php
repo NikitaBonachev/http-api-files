@@ -9,7 +9,6 @@ require __DIR__ . '/../../test_bootstrap.php';
 
 /**
  * Class DataManagerTest
- * @package DataManagerTest
  */
 class DataManagerTest extends TestCase
 {
@@ -165,7 +164,12 @@ class DataManagerTest extends TestCase
         );
 
         // Update with non exist Id
-        $result = $dataProvider->updateFile(99999, $newOriginalName2, $newFileName);
+        $result = $dataProvider->updateFile(
+            99999,
+            $newOriginalName2,
+            $newFileName
+        );
+
         $this->assertTrue($result == -1);
 
         // Update file with already exist name
