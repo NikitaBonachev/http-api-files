@@ -144,10 +144,33 @@ class ControllerProviderTest extends WebTestCase
         $response = $client->getResponse();
         $content = $response->getContent();
 
+        // Upload new file
         $this->assertJson($content);
         $this->assertTrue(json_decode($content, true)['id'] > 0);
         $this->assertTrue(
             $response->getStatusCode() == HTTPResponse::HTTP_CREATED
+        );
+
+        // Upload without file
+        $client->request('POST', '/files');
+        $responseEmptyFile = $client->getResponse();
+        $contentEmptyFile = $responseEmptyFile->getContent();
+        $this->assertJson($contentEmptyFile);
+        $this->assertTrue(
+            $responseEmptyFile->getStatusCode() == HTTPResponse::HTTP_BAD_REQUEST
+        );
+
+        // Upload with name exist
+        $fileUploadExist = self::generateFileForTest('testUploadNewFile.htm');
+        $client->request(
+            'POST',
+            '/files',
+            [],
+            ['upload_file' => $fileUploadExist]
+        );
+        $responseAlreadyExist = $client->getResponse();
+        $this->assertTrue(
+            $responseAlreadyExist->getStatusCode() == HTTPResponse::HTTP_BAD_REQUEST
         );
     }
 
@@ -208,13 +231,17 @@ class ControllerProviderTest extends WebTestCase
         $clientDelete = $this->createClient();
         $clientDelete->request('DELETE', '/files/' . $newFileId);
         $response = $clientDelete->getResponse();
-        $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_NO_CONTENT);
+        $this->assertTrue(
+            $response->getStatusCode() == HTTPResponse::HTTP_NO_CONTENT
+        );
 
         // Delete twice
         $clientDeleteAgain = $this->createClient();
         $clientDeleteAgain->request('DELETE', '/files/' . $newFileId);
         $response = $clientDeleteAgain->getResponse();
-        $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_NOT_FOUND);
+        $this->assertTrue(
+            $response->getStatusCode() == HTTPResponse::HTTP_NOT_FOUND
+        );
     }
 
 
@@ -245,7 +272,7 @@ class ControllerProviderTest extends WebTestCase
         $response = $clientUpdateName->getResponse();
         $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_OK);
 
-        //Update file name with wrong Id
+        //Update file name with non-exist Id
         $clientUpdateWrongId = $this->createClient();
         $clientUpdateWrongId->request(
             'PUT',
@@ -256,14 +283,30 @@ class ControllerProviderTest extends WebTestCase
             json_encode(['name' => $newFileName])
         );
         $response = $clientUpdateWrongId->getResponse();
-        $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_NOT_FOUND);
+        $this->assertTrue(
+            $response->getStatusCode() == HTTPResponse::HTTP_NOT_FOUND
+        );
+
+        //Update file name with invalid Id
+        $clientUpdateWrongId = $this->createClient();
+        $clientUpdateWrongId->request(
+            'PUT',
+            '/files/' . 'dd' . '/name',
+            [],
+            [],
+            [],
+            json_encode(['name' => $newFileName])
+        );
+        $response = $clientUpdateWrongId->getResponse();
+        $this->assertTrue(
+            $response->getStatusCode() == HTTPResponse::HTTP_BAD_REQUEST
+        );
 
         // Create file with name already exist
         $nameAlreadyExist = 'alreadyExist.txt';
         $fileUpload = self::generateFileForTest($nameAlreadyExist);
 
         //Upload file
-        $clientCreate = $this->createClient();
         $clientCreate->request('POST', '/files', [],
             ['upload_file' => $fileUpload]);
 
@@ -278,7 +321,9 @@ class ControllerProviderTest extends WebTestCase
             json_encode(['name' => $nameAlreadyExist])
         );
         $response = $clientUpdateWrongName->getResponse();
-        $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_BAD_REQUEST);
+        $this->assertTrue(
+            $response->getStatusCode() == HTTPResponse::HTTP_BAD_REQUEST
+        );
     }
 
 
@@ -295,11 +340,34 @@ class ControllerProviderTest extends WebTestCase
 
         // Create and update
         $fileUpload = self::generateFileForTest('updateFile2.htm');
-        $clientCreate = $this->createClient();
         $clientCreate->request('POST', '/files/' . $newFileId . '/content', [],
             ['upload_file' => $fileUpload]);
         $response = $clientCreate->getResponse();
         $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_OK);
+
+        // Try to update with wrong ID
+        $clientCreate->request('POST', '/files/' . 133333 . '/content', [],
+            ['upload_file' => $fileUpload]);
+        $response = $clientCreate->getResponse();
+        $this->assertTrue(
+            $response->getStatusCode() == HTTPResponse::HTTP_NOT_FOUND
+        );
+
+        // Try to update with invalid ID
+        $clientCreate->request('POST', '/files/' . 'test' . '/content', [],
+            ['upload_file' => $fileUpload]);
+        $response = $clientCreate->getResponse();
+        $this->assertTrue(
+            $response->getStatusCode() == HTTPResponse::HTTP_BAD_REQUEST
+        );
+
+        // Try to update without file
+        $clientCreate->request('POST', '/files/' . $newFileId . '/content', [],
+            []);
+        $response = $clientCreate->getResponse();
+        $this->assertTrue(
+            $response->getStatusCode() == HTTPResponse::HTTP_BAD_REQUEST
+        );
     }
 
 

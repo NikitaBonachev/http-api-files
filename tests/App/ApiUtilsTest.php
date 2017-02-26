@@ -5,6 +5,7 @@ namespace App;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Config\ConfigProvider as ConfigProvider;
+use Symfony\Component\HttpFoundation\Request;
 
 require __DIR__ . '/../test_bootstrap.php';
 
@@ -15,9 +16,6 @@ class ApiUtilsTest extends TestCase
 {
     public function testCheckRequestFiles()
     {
-        $this->assertFalse(ApiUtils::checkRequestFile(null));
-        $this->assertFalse(ApiUtils::checkRequestFile(true));
-
         $app = require __DIR__ . '/../test_bootstrap.php';
 
         copy(
@@ -36,7 +34,19 @@ class ApiUtilsTest extends TestCase
             true
         );
 
-        $this->assertTrue(ApiUtils::checkRequestFile($fileUpload));
+        $testRequest = new Request(
+            [],
+            [],
+            [],
+            [],
+            ['upload_file' => $fileUpload]
+        );
+
+        $result = ApiUtils::checkRequestFile($testRequest);
+        $this->assertTrue($result instanceof UploadedFile);
+
+        $testRequestEmpty = new Request();
+        $this->assertFalse(ApiUtils::checkRequestFile($testRequestEmpty));
     }
 
     public function testCheckRequestId()

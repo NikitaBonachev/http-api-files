@@ -4,6 +4,7 @@ namespace App;
 
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application as App;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Data\FilesStorage;
@@ -93,9 +94,10 @@ class ControllerProvider implements ControllerProviderInterface
      */
     public function updateFile(App $app, Request $request, $id)
     {
-        $file = $request->files->get('upload_file');
+        $file = ApiUtils::checkRequestFile($request);
         $id = ApiUtils::checkRequestId($id);
-        if (ApiUtils::checkRequestFile($file) && $id) {
+
+        if ($file instanceof UploadedFile && $id) {
 
             // Try to update
             $result['id'] = FilesStorage::updateFile($file, $id, $app);
@@ -146,7 +148,7 @@ class ControllerProvider implements ControllerProviderInterface
 
             $errorResponse = [
                 "code" => Response::HTTP_BAD_REQUEST,
-                "message" => "Invalid ID or new file name",
+                "message" => "Invalid ID.",
                 "request" => $request->getContent()
             ];
 
@@ -194,9 +196,9 @@ class ControllerProvider implements ControllerProviderInterface
      */
     public function uploadNewFile(App $app, Request $request)
     {
-        $file = $request->files->get('upload_file');
+        $file = ApiUtils::checkRequestFile($request);
 
-        if (ApiUtils::checkRequestFile($file)) {
+        if ($file instanceof UploadedFile) {
 
             $result['id'] = FilesStorage::createFile($file, $app);
             if ($result['id'] == -1) {
@@ -207,7 +209,7 @@ class ControllerProvider implements ControllerProviderInterface
                         "message" => "File with this name already exists",
                         "request" => ""
                     ],
-                    Response::HTTP_NOT_FOUND
+                    Response::HTTP_BAD_REQUEST
                 );
 
             } else {
@@ -223,7 +225,7 @@ class ControllerProvider implements ControllerProviderInterface
                     "message" => "File missing.",
                     "request" => ""
                 ],
-                Response::HTTP_NOT_FOUND
+                Response::HTTP_BAD_REQUEST
             );
 
         }

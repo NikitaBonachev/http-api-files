@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -11,20 +12,25 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class ApiUtils
 {
     /**
-     * Check that file is really file
+     * Check that file is exist in request
      *
-     * @param $file
-     * @return bool
+     * @param Request $request
+     * @return UploadedFile|false
      */
-    public static function checkRequestFile($file)
+    public static function checkRequestFile(Request $request)
     {
+        $file = null;
+        try {
+            $file = $request->files->get('upload_file');
+        } catch (\Exception $e) {
+
+        }
+
         if (!$file) {
-            return false;
+            $file = false;
         }
-        if ($file instanceof UploadedFile) {
-            return true;
-        }
-        return false;
+
+        return $file;
     }
 
 
