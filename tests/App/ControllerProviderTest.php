@@ -324,6 +324,7 @@ class ControllerProviderTest extends WebTestCase
         $this->assertTrue($response->getStatusCode() == HTTPResponse::HTTP_OK);
     }
 
+
     public function testUnknownError()
     {
         $clientGet = $this->createClient();
