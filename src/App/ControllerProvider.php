@@ -313,12 +313,10 @@ class ControllerProvider implements ControllerProviderInterface
      */
     public function error(\Exception $e, Request $request, $code)
     {
-        switch ($code) {
-            case Response::HTTP_NOT_FOUND:
-                $message = 'The requested resource could not be found.';
-                break;
-            default:
-                $message = $e->getMessage();
+        $message = $e->getMessage();
+
+        if ($code ==  Response::HTTP_NOT_FOUND) {
+            $message = 'The requested resource could not be found.';
         }
 
         return $this->app->json(

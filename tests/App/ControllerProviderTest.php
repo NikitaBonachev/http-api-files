@@ -3,8 +3,10 @@
 namespace App;
 
 use Silex\WebTestCase;
+use Symfony\Component\BrowserKit\Request;
 use Symfony\Component\HttpFoundation\Response as HTTPResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request as HTTPRequest;
 use App\Config\ConfigProvider as ConfigProvider;
 
 /**
@@ -103,8 +105,10 @@ class ControllerProviderTest extends WebTestCase
         $controllerProvider = new ControllerProvider();
         $controllerCollection = $controllerProvider->connect($app);
         $this->assertNotNull($controllerCollection);
-        $this->assertInstanceOf('Silex\ControllerCollection',
-            $controllerCollection);
+        $this->assertInstanceOf(
+            'Silex\ControllerCollection',
+            $controllerCollection
+        );
     }
 
 
@@ -371,7 +375,7 @@ class ControllerProviderTest extends WebTestCase
     }
 
 
-    public function testUnknownError()
+    public function testError()
     {
         $clientGet = $this->createClient();
         $clientGet->request('GET', '/files/ololo/meta');
