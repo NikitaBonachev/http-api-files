@@ -4,6 +4,10 @@ namespace App;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * Class ApiUtils
+ * @package App
+ */
 class ApiUtils
 {
     /**

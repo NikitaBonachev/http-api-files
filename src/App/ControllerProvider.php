@@ -9,6 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Data\FilesStorage;
 use App\Data\DataManager;
 
+/**
+ * Class ControllerProvider
+ * @package App
+ */
 class ControllerProvider implements ControllerProviderInterface
 {
     private $app;

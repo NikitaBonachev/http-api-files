@@ -5,6 +5,10 @@ namespace App\Data;
 use Doctrine\DBAL\Connection;
 use App\Data\Entities;
 
+/**
+ * Class DataManager
+ * @package App\Data
+ */
 class DataManager
 {
     /**
@@ -51,6 +55,7 @@ class DataManager
                 id INT(11) NOT NULL AUTO_INCREMENT,
                 original_name CHAR(250) NOT NULL,
                 file_name CHAR(250) NOT NULL,
+                creation_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY(id)
             )
         ;";

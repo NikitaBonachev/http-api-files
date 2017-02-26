@@ -8,6 +8,10 @@ use Silex\Application as App;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response as HTTPResponse;
 
+/**
+ * Class FilesStorage
+ * @package App\Data
+ */
 class FilesStorage
 {
     /**
@@ -157,7 +161,7 @@ class FilesStorage
      * @param integer $id
      * @param App $app
      *
-     * @return bool
+     * @return array
      */
     public static function getFileMeta($id, App $app)
     {
@@ -171,13 +175,16 @@ class FilesStorage
         if (!file_exists($filePath) || $result['id'] == 0) {
             return $app->abort(404);
         } else {
-            $meta['name'] = $result['original_name'];
-            $meta['size'] = filesize($filePath);
-            $meta['filemtime'] = gmdate(DATE_RFC1123, filemtime($filePath));
-            $meta['filectime'] = gmdate(DATE_RFC1123, filectime($filePath));
-            $meta['fileatime'] = gmdate(DATE_RFC1123, fileatime($filePath));
-            $meta['mime_type'] = mime_content_type($filePath);
-            $meta['md5'] = hash_file("md5", $filePath);
+            $creationTime = strtotime($result['creation_time']);
+            $meta = [
+                'name' => $result['original_name'],
+                'size' => filesize($filePath),
+                'mime_type' => mime_content_type($filePath),
+                'md5' => hash_file("md5", $filePath),
+                'creation_time' => date(DATE_RFC1123, $creationTime),
+                'last_access' => date(DATE_RFC1123, fileatime($filePath)),
+                'modification_time' => date(DATE_RFC1123, filemtime($filePath))
+            ];
             try {
                 $meta['exif'] = exif_read_data($filePath);
             } catch (\Exception $e) {

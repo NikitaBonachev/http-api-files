@@ -2,6 +2,10 @@
 
 namespace App\Config;
 
+/**
+ * Class ConfigProvider
+ * @package App\Config
+ */
 class ConfigProvider
 {
     /**
