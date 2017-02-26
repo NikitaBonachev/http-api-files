@@ -7,6 +7,10 @@ use App\Data\DataManager as DataManager;
 
 require __DIR__ . '/../../test_bootstrap.php';
 
+/**
+ * Class DataManagerTest
+ * @package DataManagerTest
+ */
 class DataManagerTest extends TestCase
 {
     protected function tearDown()
@@ -18,6 +22,9 @@ class DataManagerTest extends TestCase
     }
 
 
+    /**
+     * @return DataManager
+     */
     private function getDataProvider()
     {
         $app = require __DIR__ . '/../../test_bootstrap.php';
@@ -170,6 +177,12 @@ class DataManagerTest extends TestCase
     }
 
 
+    /**
+     * Get private method for tests
+     *
+     * @param $name
+     * @return \ReflectionMethod
+     */
     protected static function getMethod($name)
     {
         $class = new \ReflectionClass('App\Data\DataManager');
