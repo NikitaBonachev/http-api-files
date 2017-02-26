@@ -43,7 +43,7 @@ class ControllerProvider implements ControllerProviderInterface
         $controllers
             ->get('/files/{id}/meta', [$this, 'getFileMeta']);
 
-        // Update file
+        // Update file (I think it's little bit wrong to use POST here)
         $controllers
             ->post('/files/{id}/content', [$this, 'updateFile']);
 
@@ -87,8 +87,11 @@ class ControllerProvider implements ControllerProviderInterface
         $file = $request->files->get('upload_file');
         $id = ApiUtils::checkRequestId($id);
         if (ApiUtils::checkRequestFile($file) && $id) {
+
+            // Try to update
             $result['id'] = FilesStorage::updateFile($file, $id, $app);
             if ($result['id'] == 0) {
+
                 return $app->json(
                     [
                         "code" => Response::HTTP_NOT_FOUND,
@@ -97,18 +100,22 @@ class ControllerProvider implements ControllerProviderInterface
                     ],
                     Response::HTTP_NOT_FOUND
                 );
+
             } else {
                 return $app->json($result, Response::HTTP_OK);
             }
+
         } else {
+
             return $app->json(
                 [
                     "code" => Response::HTTP_BAD_REQUEST,
-                    "message" => "File missing or non integer ID",
+                    "message" => "File missing or non valid ID",
                     "request" => $request->getContent()
                 ],
                 Response::HTTP_BAD_REQUEST
             );
+
         }
     }
 
@@ -141,11 +148,12 @@ class ControllerProvider implements ControllerProviderInterface
         $result = FilesStorage::updateFileName($id, $newName, $app);
 
         if ($result > 0) {
-
+            // Success update file name
             return $app->json(['id' => $id], Response::HTTP_OK);
 
-        } elseif ($result == -1 ) {
+        } elseif ($result == -1) {
 
+            // File with this ID doesn't exist
             $errorResponse = [
                 "code" => Response::HTTP_NOT_FOUND,
                 "message" => "File with this id not found. Id = " . $id,
@@ -156,6 +164,7 @@ class ControllerProvider implements ControllerProviderInterface
 
         } else {
 
+            // File with this name already exist
             $errorResponse = [
                 "code" => Response::HTTP_BAD_REQUEST,
                 "message" => "File with this name already exists",
@@ -177,10 +186,12 @@ class ControllerProvider implements ControllerProviderInterface
     public function uploadNewFile(App $app, Request $request)
     {
         $file = $request->files->get('upload_file');
-        if (ApiUtils::checkRequestFile($file)) {
-            $result['id'] = FilesStorage::createFile($file, $app);
 
+        if (ApiUtils::checkRequestFile($file)) {
+
+            $result['id'] = FilesStorage::createFile($file, $app);
             if ($result['id'] == -1) {
+                // Wrong file name
                 return $app->json(
                     [
                         "code" => Response::HTTP_BAD_REQUEST,
@@ -189,10 +200,14 @@ class ControllerProvider implements ControllerProviderInterface
                     ],
                     Response::HTTP_NOT_FOUND
                 );
+
             } else {
+                // Success
                 return $app->json($result, Response::HTTP_CREATED);
             }
+
         } else {
+
             return $app->json(
                 [
                     "code" => Response::HTTP_BAD_REQUEST,
@@ -201,6 +216,7 @@ class ControllerProvider implements ControllerProviderInterface
                 ],
                 Response::HTTP_NOT_FOUND
             );
+
         }
     }
 
@@ -240,8 +256,8 @@ class ControllerProvider implements ControllerProviderInterface
         if (!$id) {
             return $app->json(
                 [
-                    "code" => Response::HTTP_BAD_REQUEST,
-                    "message" => "File valid ID",
+                    "code" => Response::HTTP_NOT_FOUND,
+                    "message" => "File with this ID doesn't exist. ID = " . $id,
                     "request" => ""
                 ],
                 Response::HTTP_NOT_FOUND
