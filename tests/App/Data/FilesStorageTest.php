@@ -1,12 +1,10 @@
 <?php
 
-namespace FilesStorageTest;
+namespace App\Data;
 
 use App\Config\ConfigProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use PHPUnit\Framework\TestCase;
-use App\Data\FilesStorage as FilesStorage;
-use App\Data\DataManager as DataManager;
 
 /**
  * Class FilesStorageTest

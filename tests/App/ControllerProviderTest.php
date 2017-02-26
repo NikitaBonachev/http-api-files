@@ -1,9 +1,8 @@
 <?php
 
-namespace ControllerProviderTest;
+namespace App;
 
 use Silex\WebTestCase;
-use App\ControllerProvider as ControllerProvider;
 use Symfony\Component\HttpFoundation\Response as HTTPResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Config\ConfigProvider as ConfigProvider;

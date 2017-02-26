@@ -1,9 +1,8 @@
 <?php
 
-namespace DataManagerTest;
+namespace App\Data;
 
 use PHPUnit\Framework\TestCase;
-use App\Data\DataManager as DataManager;
 
 require __DIR__ . '/../../test_bootstrap.php';
 

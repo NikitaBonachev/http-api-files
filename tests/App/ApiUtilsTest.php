@@ -1,9 +1,8 @@
 <?php
 
-namespace ApiUtilsTest;
+namespace App;
 
 use PHPUnit\Framework\TestCase;
-use App\ApiUtils as ApiUtils;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Config\ConfigProvider as ConfigProvider;
 
