@@ -97,9 +97,9 @@ class ControllerProvider implements ControllerProviderInterface
     {
         $file = ApiUtils::checkRequestFile($request);
         $id = ApiUtils::checkRequestId($id);
+        $requestContent = ApiUtils::checkRequestLength($request->getContent());
 
         if ($file instanceof UploadedFile && $id) {
-
             // Try to update
             $result['id'] = intval(FilesStorage::updateFile($file, $id, $app));
             if ($result['id'] == 0) {
@@ -108,7 +108,7 @@ class ControllerProvider implements ControllerProviderInterface
                     [
                         "code" => Response::HTTP_NOT_FOUND,
                         "message" => "File with this ID not found. ID = " . $id,
-                        "request" => $request->getContent()
+                        "request" => $requestContent
                     ],
                     Response::HTTP_NOT_FOUND
                 );
@@ -116,18 +116,26 @@ class ControllerProvider implements ControllerProviderInterface
             } else {
                 return $app->json($result, Response::HTTP_OK);
             }
-
         } else {
-
-            return $app->json(
-                [
-                    "code" => Response::HTTP_BAD_REQUEST,
-                    "message" => "File missing or invalid ID.",
-                    "request" => $request->getContent()
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-
+            if (!$id) {
+                return $app->json(
+                    [
+                        "code" => Response::HTTP_BAD_REQUEST,
+                        "message" => "Invalid ID.",
+                        "request" => $requestContent
+                    ],
+                    Response::HTTP_BAD_REQUEST
+                );
+            } else {
+                return $app->json(
+                    [
+                        "code" => Response::HTTP_BAD_REQUEST,
+                        "message" => "File missing.",
+                        "request" => $requestContent
+                    ],
+                    Response::HTTP_BAD_REQUEST
+                );
+            }
         }
     }
 
@@ -144,13 +152,14 @@ class ControllerProvider implements ControllerProviderInterface
     {
         $newName = json_decode($request->getContent(), true)['name'];
         $id = ApiUtils::checkRequestId($id);
+        $requestContent = ApiUtils::checkRequestLength($request->getContent());
 
         if (!$id) {
 
             $errorResponse = [
                 "code" => Response::HTTP_BAD_REQUEST,
                 "message" => "Invalid ID.",
-                "request" => $request->getContent()
+                "request" => $requestContent
             ];
 
             return $app->json($errorResponse, Response::HTTP_BAD_REQUEST);
@@ -169,7 +178,7 @@ class ControllerProvider implements ControllerProviderInterface
             $errorResponse = [
                 "code" => Response::HTTP_NOT_FOUND,
                 "message" => "File with this ID not found. ID = " . $id,
-                "request" => $request->getContent()
+                "request" => $requestContent
             ];
 
             return $app->json($errorResponse, Response::HTTP_NOT_FOUND);
@@ -180,7 +189,7 @@ class ControllerProvider implements ControllerProviderInterface
             $errorResponse = [
                 "code" => Response::HTTP_BAD_REQUEST,
                 "message" => "File with this name already exists. Name = " . $newName,
-                "request" => $request->getContent()
+                "request" => $requestContent
             ];
 
             return $app->json($errorResponse, Response::HTTP_BAD_REQUEST);
@@ -198,6 +207,7 @@ class ControllerProvider implements ControllerProviderInterface
     public function uploadNewFile(App $app, Request $request)
     {
         $file = ApiUtils::checkRequestFile($request);
+        $requestContent = ApiUtils::checkRequestLength($request->getContent());
 
         if ($file instanceof UploadedFile) {
 
@@ -208,7 +218,7 @@ class ControllerProvider implements ControllerProviderInterface
                     [
                         "code" => Response::HTTP_BAD_REQUEST,
                         "message" => "File with this name already exists",
-                        "request" => ""
+                        "request" => $requestContent
                     ],
                     Response::HTTP_BAD_REQUEST
                 );
@@ -224,7 +234,7 @@ class ControllerProvider implements ControllerProviderInterface
                 [
                     "code" => Response::HTTP_BAD_REQUEST,
                     "message" => "File missing.",
-                    "request" => ""
+                    "request" => $requestContent
                 ],
                 Response::HTTP_BAD_REQUEST
             );

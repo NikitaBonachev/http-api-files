@@ -68,4 +68,16 @@ class ApiUtilsTest extends TestCase
         $this->assertFalse(ApiUtils::checkRequestString(null));
         $this->assertFalse(ApiUtils::checkRequestString(123));
     }
+
+    public function testCheckRequestLength()
+    {
+        $shortString = 'short string';
+        $this->assertTrue(
+            ApiUtils::checkRequestLength($shortString) == $shortString
+        );
+        $longString = file_get_contents(__DIR__ . '/Data/TestFiles/Xsolla.htm');
+        $this->assertFalse(
+            ApiUtils::checkRequestLength($longString) == $longString
+        );
+    }
 }

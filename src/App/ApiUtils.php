@@ -64,4 +64,20 @@ class ApiUtils
         }
         return true;
     }
+
+
+    /**
+     * Return the request content string
+     *
+     * @param $requestString
+     * @return string
+     */
+    public static function checkRequestLength($requestString)
+    {
+        if (strlen($requestString) < 500) {
+            return $requestString;
+        } else {
+            return 'Sorry, but the request content is too long';
+        }
+    }
 }
