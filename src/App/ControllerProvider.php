@@ -219,9 +219,9 @@ class ControllerProvider implements ControllerProviderInterface
             $fileInfo['filePath'],
             Response::HTTP_OK,
             [
-                'Content-Type' => mime_content_type($fileInfo['filePath']),
+                'Content-Type' => $fileInfo['Content-Type'],
                 'Content-Disposition' => 'inline',
-                'filename' => basename($fileInfo['originalName'])
+                'filename' => $fileInfo['filename']
             ]
         );
     }

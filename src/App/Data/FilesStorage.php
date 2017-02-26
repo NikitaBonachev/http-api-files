@@ -24,8 +24,8 @@ class FilesStorage
         $dataProvider = new DataManager($db);
         $originalName = $file->getClientOriginalName();
 
+        // Check if file with this name doesn't exist in database
         $result = $dataProvider->getFileByName($originalName);
-
         if ($result > 0) {
             return -1;
         }
@@ -38,6 +38,8 @@ class FilesStorage
         }
 
         $file->move($path, $fileName);
+
+        // Add new file in DB. Return ID
         return $dataProvider->addNewFile($originalName, $fileName);
     }
 
@@ -59,6 +61,7 @@ class FilesStorage
 
         $prevFile = $dataProvider->getOneFile($id);
 
+        // Check that file exist
         if ($prevFile['id'] > 0) {
             $previousFilePath = ConfigProvider::getUploadDir($app['env']);
             $previousFilePath .= $prevFile['file_name'];
@@ -112,9 +115,12 @@ class FilesStorage
         if (!file_exists($uploadPath . $result['file_name']) || $result == 0) {
             return $app->abort(HTTPResponse::HTTP_NOT_FOUND);
         } else {
+            $filePath = $uploadPath . $result['file_name'];
             return [
-                'filePath' => $uploadPath . $result['file_name'],
-                'originalName' => $result['original_name']
+                'filePath' => $filePath,
+                'originalName' => $result['original_name'],
+                'Content-Type' => mime_content_type($filePath),
+                'filename' => $result['original_name']
             ];
         }
     }
@@ -133,10 +139,11 @@ class FilesStorage
         $dataProvider = new DataManager($db);
         $result = $dataProvider->getOneFile($id);
         $uploadPath = ConfigProvider::getUploadDir($app['env']);
+        $filePath = $uploadPath . $result['file_name'];
 
-        if (file_exists($uploadPath . $result['file_name'])) {
-            if (is_file($uploadPath . $result['file_name'])) {
-                unlink($uploadPath . $result['file_name']);
+        if (file_exists($filePath)) {
+            if (is_file($filePath)) {
+                unlink($filePath);
             }
         }
 
@@ -158,7 +165,8 @@ class FilesStorage
         $dataProvider = new DataManager($db);
         $result = $dataProvider->getOneFile($id);
 
-        $filePath = ConfigProvider::getUploadDir($app['env']) . $result['file_name'];
+        $filePath = ConfigProvider::getUploadDir($app['env']);
+        $filePath .= $result['file_name'];
 
         if (!file_exists($filePath) || $result['id'] == 0) {
             return $app->abort(404);

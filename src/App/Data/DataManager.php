@@ -20,6 +20,8 @@ class DataManager
 
 
     /**
+     * Drop table of files. Use it only for tests!
+     *
      * @return bool
      * @throws \Exception
      */
@@ -38,6 +40,8 @@ class DataManager
 
 
     /**
+     * Create table of files
+     *
      * @return bool
      */
     private function createTableFilesList()
@@ -59,6 +63,8 @@ class DataManager
 
 
     /**
+     * Check if file with this ID exist in database
+     *
      * @param $id
      * @return bool
      */
@@ -74,6 +80,8 @@ class DataManager
 
 
     /**
+     * Return ID of file by its name
+     *
      * @param $name
      * @return bool
      */
@@ -104,10 +112,12 @@ class DataManager
 
 
     /**
+     * Create new file in database. Return ID
+     *
      * @param string $originalName
      * @param string $fileName
      *
-     * @return bool
+     * @return integer
      */
     public function addNewFile($originalName, $fileName)
     {
@@ -126,7 +136,9 @@ class DataManager
 
 
     /**
-     * @return \stdClass|null|array
+     * Return all files in database
+     *
+     * @return array
      */
     public function getFilesList()
     {
@@ -147,10 +159,11 @@ class DataManager
 
 
     /**
+     *  Return info about file
      *
      * @param int $id
      *
-     * @return \stdClass|null|array
+     * @return array
      */
     public function getOneFile($id)
     {
@@ -171,6 +184,7 @@ class DataManager
 
 
     /**
+     *  Update info about file in database
      *
      * @param int $id
      * @param string $newOriginalName
@@ -198,29 +212,30 @@ class DataManager
 
         if ($foundIdWithSameName != $id && $foundIdWithSameName > 0) {
             return 0;
-        } else {
-            $filesQueryText = "UPDATE $filesTable ";
-
-            if ($newOriginalName) {
-                $filesQueryText .= "SET original_name = '$newOriginalName' ";
-            }
-
-            if ($newFileName) {
-                if ($newOriginalName) {
-                    $filesQueryText .= ",";
-                }
-                $filesQueryText .= "file_name = '$newFileName' ";
-            }
-
-            $filesQueryText .= "WHERE id = $id;";
-            $db->executeUpdate($filesQueryText);
-
-            return 1;
         }
+
+        $filesQueryText = "UPDATE $filesTable ";
+
+        if ($newOriginalName) {
+            $filesQueryText .= "SET original_name = '$newOriginalName' ";
+        }
+
+        if ($newFileName) {
+            if ($newOriginalName) {
+                $filesQueryText .= ",";
+            }
+            $filesQueryText .= "file_name = '$newFileName' ";
+        }
+
+        $filesQueryText .= "WHERE id = $id;";
+        $db->executeUpdate($filesQueryText);
+
+        return 1;
     }
 
 
     /**
+     * Remove file from database
      *
      * @param int $id
      *

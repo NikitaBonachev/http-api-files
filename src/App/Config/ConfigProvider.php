@@ -5,6 +5,8 @@ namespace App\Config;
 class ConfigProvider
 {
     /**
+     * Return path of config file
+     *
      * @return string
      */
     private static function defaultConfigPath()
@@ -43,6 +45,8 @@ class ConfigProvider
 
 
     /**
+     * Return database config
+     *
      * @param $env
      *
      * @return array|\Exception
@@ -61,6 +65,8 @@ class ConfigProvider
 
 
     /**
+     * Return path upload folder
+     *
      * @param $env
      *
      * @return array|\Exception
