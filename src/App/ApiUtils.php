@@ -29,7 +29,7 @@ class ApiUtils
 
 
     /**
-     * Check that id is really id
+     * Check that id is really id (not very useful method)
      *
      * @param integer $id
      * @return bool|integer

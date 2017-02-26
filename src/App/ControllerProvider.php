@@ -15,10 +15,15 @@ use App\Data\DataManager;
  */
 class ControllerProvider implements ControllerProviderInterface
 {
+    /**
+     * @var App
+     */
     private $app;
 
 
     /**
+     * Create list of controllers
+     *
      * @param App $app
      * @return mixed
      */
@@ -99,7 +104,7 @@ class ControllerProvider implements ControllerProviderInterface
                 return $app->json(
                     [
                         "code" => Response::HTTP_NOT_FOUND,
-                        "message" => "File with this ID not found",
+                        "message" => "File with this ID not found. ID = " . $id,
                         "request" => $request->getContent()
                     ],
                     Response::HTTP_NOT_FOUND
@@ -114,7 +119,7 @@ class ControllerProvider implements ControllerProviderInterface
             return $app->json(
                 [
                     "code" => Response::HTTP_BAD_REQUEST,
-                    "message" => "File missing or non valid ID",
+                    "message" => "File missing or invalid ID.",
                     "request" => $request->getContent()
                 ],
                 Response::HTTP_BAD_REQUEST
@@ -141,7 +146,7 @@ class ControllerProvider implements ControllerProviderInterface
 
             $errorResponse = [
                 "code" => Response::HTTP_BAD_REQUEST,
-                "message" => "Bad Id or new file name",
+                "message" => "Invalid ID or new file name",
                 "request" => $request->getContent()
             ];
 
@@ -160,7 +165,7 @@ class ControllerProvider implements ControllerProviderInterface
             // File with this ID doesn't exist
             $errorResponse = [
                 "code" => Response::HTTP_NOT_FOUND,
-                "message" => "File with this id not found. Id = " . $id,
+                "message" => "File with this ID not found. ID = " . $id,
                 "request" => $request->getContent()
             ];
 
@@ -171,7 +176,7 @@ class ControllerProvider implements ControllerProviderInterface
             // File with this name already exist
             $errorResponse = [
                 "code" => Response::HTTP_BAD_REQUEST,
-                "message" => "File with this name already exists",
+                "message" => "File with this name already exists. Name = " . $newName,
                 "request" => $request->getContent()
             ];
 
@@ -215,7 +220,7 @@ class ControllerProvider implements ControllerProviderInterface
             return $app->json(
                 [
                     "code" => Response::HTTP_BAD_REQUEST,
-                    "message" => "File missing",
+                    "message" => "File missing.",
                     "request" => ""
                 ],
                 Response::HTTP_NOT_FOUND

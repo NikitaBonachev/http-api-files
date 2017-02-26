@@ -3,7 +3,6 @@
 namespace App;
 
 use Silex\Application as SilexApplication;
-use Silex\Provider\WebProfilerServiceProvider;
 
 /**
  * Class Application

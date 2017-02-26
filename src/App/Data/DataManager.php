@@ -68,7 +68,7 @@ class DataManager
 
 
     /**
-     * Check if file with this ID exist in database
+     * Check if file with ID exist in database
      *
      * @param $id
      * @return bool

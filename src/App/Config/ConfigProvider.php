@@ -23,7 +23,7 @@ class ConfigProvider
      * Setting configuration
      *
      * @param string $name
-     * @param string $filePath
+     * @param string $filePath - custom configuration file
      *
      * @return array
      * @throws \Exception
@@ -39,10 +39,10 @@ class ConfigProvider
             if (isset($arr[$name])) {
                 return $arr[$name];
             } else {
-                throw new \Exception('Settings empty . Name: ' . $name);
+                throw new \Exception('Settings empty. Name: ' . $name);
             }
         } else {
-            throw new \Exception('Settings empty . Dir: ' . $filePath);
+            throw new \Exception('Settings empty. Dir: ' . $filePath);
         }
 
     }
@@ -51,7 +51,7 @@ class ConfigProvider
     /**
      * Return database config
      *
-     * @param $env
+     * @param $env - environment param
      *
      * @return array|\Exception
      * @throws \Exception
@@ -63,7 +63,7 @@ class ConfigProvider
         if (is_array($databases) && isset($databases[$env])) {
             return $databases[$env];
         } else {
-            throw new \Exception('Settings database empty . Env: ' . $env);
+            throw new \Exception('Settings database empty. Environment: ' . $env);
         }
     }
 
@@ -83,7 +83,7 @@ class ConfigProvider
         if (is_array($uploadDirs) && isset($uploadDirs[$env])) {
             return $uploadDirs[$env];
         } else {
-            throw new \Exception('Settings upload dir empty . Env: ' . $env);
+            throw new \Exception('Settings upload dir empty. Environment: ' . $env);
         }
     }
 }
