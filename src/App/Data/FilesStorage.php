@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Response as HTTPResponse;
 class FilesStorage
 {
     /**
+     * Create new file
+     *
      * @param UploadedFile $file
      * @param App $app
      *
@@ -29,10 +31,10 @@ class FilesStorage
         }
 
         $path = ConfigProvider::getUploadDir($app['env']);
+        $fileName = strval(Uuid::uuid1());
+
         if ($file->getClientOriginalExtension()) {
-            $fileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
-        } else {
-            $fileName = strval(Uuid::uuid1());
+            $fileName .= '.' . $file->getClientOriginalExtension();
         }
 
         $file->move($path, $fileName);
@@ -41,6 +43,8 @@ class FilesStorage
 
 
     /**
+     * Update content of existing file
+     *
      * @param UploadedFile $file
      * @param integer $id
      * @param App $app
@@ -56,22 +60,16 @@ class FilesStorage
         $prevFile = $dataProvider->getOneFile($id);
 
         if ($prevFile['id'] > 0) {
-            $path = ConfigProvider::getUploadDir($app['env']);
+            $previousFilePath = ConfigProvider::getUploadDir($app['env']);
+            $previousFilePath .= $prevFile['file_name'];
 
-            if (file_exists($path . $prevFile['file_name'])
-                && is_file($path . $prevFile['file_name'])
+            if (file_exists($previousFilePath)
+                && is_file($previousFilePath)
             ) {
-                unlink($path . $prevFile['file_name']);
+                $newFileContent = file_get_contents($file->getRealPath());
+                file_put_contents($previousFilePath, $newFileContent);
+                $result = $prevFile['id'];
             }
-
-            $newFileName = strval(Uuid::uuid1()) . '.' . $file->getClientOriginalExtension();
-            $result = $dataProvider->updateFile(
-                $id,
-                $prevFile['original_name'],
-                $newFileName
-            );
-
-            $file->move($path, $newFileName);
         }
 
         return $result;
@@ -79,6 +77,8 @@ class FilesStorage
 
 
     /**
+     * Rename existing file
+     *
      * @param string $newFileName
      * @param integer $id
      * @param App $app
@@ -95,6 +95,8 @@ class FilesStorage
 
 
     /**
+     * Get content of file
+     *
      * @param integer $id
      * @param App $app
      *
@@ -119,6 +121,8 @@ class FilesStorage
 
 
     /**
+     * Delete file
+     *
      * @param $id
      * @param App $app
      * @return int
@@ -141,6 +145,8 @@ class FilesStorage
 
 
     /**
+     * Get meta-data of file
+     *
      * @param integer $id
      * @param App $app
      *
@@ -159,8 +165,9 @@ class FilesStorage
         } else {
             $meta['name'] = $result['original_name'];
             $meta['size'] = filesize($filePath);
-            $meta['modified'] = gmdate(DATE_RFC1123, filemtime($filePath));
-            $meta['created'] = gmdate(DATE_RFC1123, filectime($filePath));
+            $meta['filemtime'] = gmdate(DATE_RFC1123, filemtime($filePath));
+            $meta['filectime'] = gmdate(DATE_RFC1123, filectime($filePath));
+            $meta['fileatime'] = gmdate(DATE_RFC1123, fileatime($filePath));
             $meta['mime_type'] = mime_content_type($filePath);
             $meta['md5'] = hash_file("md5", $filePath);
             try {

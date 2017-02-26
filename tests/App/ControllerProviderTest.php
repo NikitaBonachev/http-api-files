@@ -16,7 +16,7 @@ class ControllerProviderTest extends WebTestCase
     protected function setUp()
     {
         parent::setUp();
-        date_default_timezone_set('America/New_York');
+        date_default_timezone_set('Asia/Yekaterinburg');
         self::deleteDirectory(ConfigProvider::getUploadDir($this->app['env']));
         mkdir(ConfigProvider::getUploadDir($this->app['env']));
         mkdir(ConfigProvider::getUploadDir($this->app['env']) . 'create');

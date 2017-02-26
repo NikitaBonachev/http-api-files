@@ -19,11 +19,6 @@ COPY php.ini /etc/php5/apache2/conf.d/99-php.ini
 ADD my.cnf /etc/mysql/conf.d/my.cnf
 RUN chmod 664 /etc/mysql/conf.d/my.cnf
 
-# apache config
-#ENV APACHE_RUN_USER www-data
-#ENV APACHE_RUN_GROUP www-data
-#ENV APACHE_LOG_DIR /var/log/apache2
-#RUN chown -R www-data:www-data /var/www/
 
 # Composer
 COPY composer.phar /usr/bin/composer

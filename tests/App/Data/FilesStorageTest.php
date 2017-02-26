@@ -63,7 +63,7 @@ class FilesStorageTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        date_default_timezone_set('America/New_York');
+        date_default_timezone_set('Asia/Yekaterinburg');
         self::deleteDirectory(ConfigProvider::getUploadDir($this->getApp()['env']));
         if (!is_dir(ConfigProvider::getUploadDir($this->getApp()['env']))) {
             mkdir(ConfigProvider::getUploadDir($this->getApp()['env']));
