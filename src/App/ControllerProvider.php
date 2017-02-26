@@ -7,6 +7,7 @@ use Silex\Application as App;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use App\Data\FilesStorage;
 use App\Data\DataManager;
 
@@ -242,15 +243,17 @@ class ControllerProvider implements ControllerProviderInterface
     public function getFile(App $app, $id)
     {
         $fileInfo = FilesStorage::getFile($id, $app);
-        return $app->sendFile(
-            $fileInfo['filePath'],
-            Response::HTTP_OK,
-            [
-                'Content-Type' => $fileInfo['Content-Type'],
-                'Content-Disposition' => 'inline',
-                'filename' => $fileInfo['filename']
-            ]
-        );
+        return
+            $app->sendFile(
+                $fileInfo['filePath'],
+                Response::HTTP_OK,
+                [
+                    'Content-Type' => $fileInfo['Content-Type'],
+                ]
+            )->setContentDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $fileInfo['filename']
+            );
     }
 
 
