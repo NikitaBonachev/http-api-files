@@ -7,6 +7,7 @@ Just do
 
 ```
 git clone https://github.com/NikitaBonachev/xsolla-test.git
+cd xsolla-test
 docker-compose run app
 ```
 
