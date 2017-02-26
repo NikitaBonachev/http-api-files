@@ -36,7 +36,7 @@ curl --request POST \
    --header 'content-type: multipart/form-data;' \
    --form 'upload_file=@test.txt'
  ```
- ### Methods
+### Methods
  
  * Get list of files
  ```
@@ -141,7 +141,7 @@ Errors has following format
 }
 ```
  
- ## Testing
+## Testing
  
  PHPUnit tests use a local database on your computer, please, write its settings on `config.php` (lines 12-15).
  Then, on terminal from your local machine
