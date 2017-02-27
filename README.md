@@ -155,6 +155,7 @@ Errors have the following format:
   ```
   phpunit --coverage-html log/coverage
  ```
+ Better do it after deploy (docker installs all dependencies). 
 ## Other 
  
  * I know, that passwords and other secrets should not be commited, but I did it for your convenience.
