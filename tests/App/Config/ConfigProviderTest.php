@@ -1,9 +1,8 @@
 <?php
 
-namespace ConfigProviderTest;
+namespace App\Config;
 
 use PHPUnit\Framework\TestCase;
-use App\Config\ConfigProvider;
 
 require __DIR__ . '/../../test_bootstrap.php';
 
