@@ -89,7 +89,7 @@ class ConfigProviderTest extends TestCase
     public function testGetLog()
     {
         $env = 'test';
-        $this->assertTrue(is_file(ConfigProvider::getLogFile($env)));
+        $this->assertTrue(is_string(ConfigProvider::getLogFile($env)));
         $this->expectException(ConfigProvider::getLogFile('wrong'));
     }
 

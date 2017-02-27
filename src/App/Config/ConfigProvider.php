@@ -97,10 +97,10 @@ class ConfigProvider
      */
     public static function getLogFile($env)
     {
-        $uploadDirs = self::file('log');
+        $logFile = self::file('log');
 
-        if (is_array($uploadDirs) && isset($uploadDirs[$env])) {
-            return $uploadDirs[$env];
+        if (isset($logFile[$env])) {
+            return $logFile[$env];
         } else {
             throw new \Exception('Settings log empty. Environment: ' . $env);
         }
