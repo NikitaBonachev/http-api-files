@@ -13,7 +13,7 @@ cd xsolla-test
 docker-compose run app
 ```
 
-Docker will setup a container with Apache and MySQL.
+Docker will setup a container with Apache 2 and MySQL.
  
 ###note
  File `config.php` contains configuration for databases (dev and test). 
@@ -155,5 +155,8 @@ Errors have the following format:
   ```
   phpunit --coverage-html log/coverage
  ```
+## Other 
  
- 
+ * I know, that passwords and other secrets should not be commited, but I did it for your convenience.
+ * I didn't implement authorization, but I would like to do it through token. 
+ At branch named `auth` I did a simple Basic Authorization with one use (it's not very interesting and completed).
