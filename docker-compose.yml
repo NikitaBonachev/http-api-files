@@ -1,5 +1,5 @@
 app:
-    container_name: xsolla-test
+    container_name: http-api-files
     build: "./docker"
     net: host
     volumes:

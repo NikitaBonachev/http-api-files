@@ -8,8 +8,8 @@ The project contains a ready for use Docker (for Mac users, I didn't test it on 
 Just do:
 
 ```
-git clone https://github.com/NikitaBonachev/xsolla-test.git
-cd xsolla-test
+git clone https://github.com/NikitaBonachev/http-api-files.git
+cd http-api-files
 docker-compose run app
 ```
 
