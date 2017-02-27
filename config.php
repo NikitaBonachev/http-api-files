@@ -17,8 +17,11 @@ return [
         ]
     ],
     'uploadDirs' => [
-        'prod' => __DIR__.'/upload/',
-        'dev' => __DIR__.'/upload/',
-        'test' => __DIR__.'/upload_test/'
+        'dev' => __DIR__ . '/upload/',
+        'test' => __DIR__ . '/tests/upload/'
+    ],
+    'log' => [
+        'dev' => __DIR__ . '/log/errors.log',
+        'test' => __DIR__ . '/tests/log/errors.log',
     ]
 ];

@@ -7,6 +7,9 @@ use App\Config\ConfigProvider;
 
 require __DIR__ . '/../../test_bootstrap.php';
 
+/**
+ * Class ConfigProviderTest
+ */
 class ConfigProviderTest extends TestCase
 {
     public function testFile()
@@ -81,6 +84,23 @@ class ConfigProviderTest extends TestCase
     }
 
 
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetLog()
+    {
+        $env = 'test';
+        $this->assertTrue(is_file(ConfigProvider::getLogFile($env)));
+        $this->assertTrue(!is_file(ConfigProvider::getLogFile('wrong')));
+    }
+
+
+    /**
+     * Get private method
+     *
+     * @param $name
+     * @return \ReflectionMethod
+     */
     protected static function getMethod($name)
     {
         $class = new \ReflectionClass('App\Config\ConfigProvider');

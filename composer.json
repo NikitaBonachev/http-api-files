@@ -3,7 +3,8 @@
   "require": {
     "silex/silex":"~2.0",
     "doctrine/dbal": "~2.4",
-    "ramsey/uuid": "^3.5"
+    "ramsey/uuid": "^3.5",
+    "monolog/monolog": "^1.22"
   },
   "autoload": {
     "psr-4": {

@@ -20,6 +20,14 @@ try {
     if (!is_dir(\App\Config\ConfigProvider::getUploadDir($app_env))) {
         mkdir(\App\Config\ConfigProvider::getUploadDir($app_env));
     }
+
+    $app->register(
+        new Silex\Provider\MonologServiceProvider(),
+        [
+            'monolog.logfile' => \App\Config\ConfigProvider::getLogFile($app_env),
+        ]
+    );
+
 } catch (Exception $e) {
     // Exception will be caught in application
 }

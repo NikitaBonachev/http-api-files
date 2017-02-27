@@ -85,4 +85,24 @@ class ConfigProvider
             throw new \Exception('Settings upload dir empty. Environment: ' . $env);
         }
     }
+
+
+    /**
+     * Return path upload folder
+     *
+     * @param $env
+     *
+     * @return array|\Exception
+     * @throws \Exception
+     */
+    public static function getLogFile($env)
+    {
+        $uploadDirs = self::file('log');
+
+        if (is_array($uploadDirs) && isset($uploadDirs[$env])) {
+            return $uploadDirs[$env];
+        } else {
+            throw new \Exception('Settings log empty. Environment: ' . $env);
+        }
+    }
 }

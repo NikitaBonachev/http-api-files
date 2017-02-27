@@ -317,12 +317,16 @@ class ControllerProvider implements ControllerProviderInterface
             $message = 'The requested resource could not be found.';
         }
 
+        $error = [
+            "code" => $code,
+            "message" => $message,
+            "request" => $request->getContent()
+        ];
+
+        $this->app['monolog']->addError(implode('; ', $error));
+
         return $this->app->json(
-            [
-                "code" => $code,
-                "message" => $message,
-                "request" => $request->getContent()
-            ],
+            $error,
             $code
         );
     }

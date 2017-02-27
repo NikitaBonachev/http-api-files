@@ -3,10 +3,8 @@
 namespace App;
 
 use Silex\WebTestCase;
-use Symfony\Component\BrowserKit\Request;
 use Symfony\Component\HttpFoundation\Response as HTTPResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request as HTTPRequest;
 use App\Config\ConfigProvider as ConfigProvider;
 
 /**
