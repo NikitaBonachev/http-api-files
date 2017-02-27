@@ -20,7 +20,7 @@ Docker will setup a container with Apache 2 and MySQL.
  If you would like to change something in  `config.php` be sure, that `docker-compose.yml` has the same changes.
  
 ## API Documentation
- I've created a documentation on [Postman](https://documenter.getpostman.com/collection/view/1593302-997f6d66-aa8c-df96-328f-8277a759aee5), you can use examples from it.
+ I've created a documentation on [Postman](https://documenter.getpostman.com/view/1593302/http-api-files/6YsXd8V), you can use examples from it.
  Please, be careful with POST-requests from Postman-examples.  
  
  For instance, this request from Postman doesn't work properly:
