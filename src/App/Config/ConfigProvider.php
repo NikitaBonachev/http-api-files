@@ -44,7 +44,6 @@ class ConfigProvider
         } else {
             throw new \Exception('Settings empty. Dir: ' . $filePath);
         }
-
     }
 
 

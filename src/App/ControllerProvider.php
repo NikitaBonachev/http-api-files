@@ -54,7 +54,7 @@ class ControllerProvider implements ControllerProviderInterface
         $controllers
             ->get('/files/{id}/meta', [$this, 'getFileMeta']);
 
-        // Update file (I think it's little bit wrong to use POST here)
+        // Update file (I think it's a little bit wrong to use POST here)
         $controllers
             ->post('/files/{id}/content', [$this, 'updateFile']);
 
@@ -86,7 +86,7 @@ class ControllerProvider implements ControllerProviderInterface
 
 
     /**
-     * Update file
+     * Update file content
      *
      * @param App $app
      * @param Request $request
@@ -103,7 +103,6 @@ class ControllerProvider implements ControllerProviderInterface
             // Try to update
             $result['id'] = intval(FilesStorage::updateFile($file, $id, $app));
             if ($result['id'] == 0) {
-
                 return $app->json(
                     [
                         "code" => Response::HTTP_NOT_FOUND,
@@ -112,7 +111,6 @@ class ControllerProvider implements ControllerProviderInterface
                     ],
                     Response::HTTP_NOT_FOUND
                 );
-
             } else {
                 return $app->json($result, Response::HTTP_OK);
             }
@@ -155,15 +153,12 @@ class ControllerProvider implements ControllerProviderInterface
         $requestContent = ApiUtils::checkRequestLength($request->getContent());
 
         if (!$id) {
-
             $errorResponse = [
                 "code" => Response::HTTP_BAD_REQUEST,
                 "message" => "Invalid ID.",
                 "request" => $requestContent
             ];
-
             return $app->json($errorResponse, Response::HTTP_BAD_REQUEST);
-
         }
 
         $result = FilesStorage::updateFileName($id, $newName, $app);
@@ -171,27 +166,21 @@ class ControllerProvider implements ControllerProviderInterface
         if ($result > 0) {
             // Success update file name
             return $app->json(['id' => intval($id)], Response::HTTP_OK);
-
         } elseif ($result == -1) {
-
             // File with this ID doesn't exist
             $errorResponse = [
                 "code" => Response::HTTP_NOT_FOUND,
                 "message" => "File with this ID not found. ID = " . $id,
                 "request" => $requestContent
             ];
-
             return $app->json($errorResponse, Response::HTTP_NOT_FOUND);
-
         } else {
-
             // File with this name already exist
             $errorResponse = [
                 "code" => Response::HTTP_BAD_REQUEST,
                 "message" => "File with this name already exists. Name = " . $newName,
                 "request" => $requestContent
             ];
-
             return $app->json($errorResponse, Response::HTTP_BAD_REQUEST);
         }
     }
@@ -210,7 +199,6 @@ class ControllerProvider implements ControllerProviderInterface
         $requestContent = ApiUtils::checkRequestLength($request->getContent());
 
         if ($file instanceof UploadedFile) {
-
             $result['id'] = intval(FilesStorage::createFile($file, $app));
             if ($result['id'] == -1) {
                 // Wrong file name
@@ -222,14 +210,12 @@ class ControllerProvider implements ControllerProviderInterface
                     ],
                     Response::HTTP_BAD_REQUEST
                 );
-
             } else {
                 // Success
                 return $app->json($result, Response::HTTP_CREATED);
             }
-
         } else {
-
+            // Wrong file
             return $app->json(
                 [
                     "code" => Response::HTTP_BAD_REQUEST,
@@ -238,7 +224,6 @@ class ControllerProvider implements ControllerProviderInterface
                 ],
                 Response::HTTP_BAD_REQUEST
             );
-
         }
     }
 

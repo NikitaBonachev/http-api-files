@@ -1,8 +1,6 @@
 <?php
 
 use Silex\Application as SilexApplication;
-use Silex\Provider\WebProfilerServiceProvider;
-use Symfony\Component\HttpKernel\Debug\ExceptionHandler;
 use Silex\Provider\DoctrineServiceProvider;
 
 $loader = require __DIR__ . '/../vendor/autoload.php';

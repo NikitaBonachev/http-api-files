@@ -48,7 +48,7 @@ GET /files
 ```
 
 Return the list of files on the server.
-Response example:
+Example response:
 ```
  {
    "list": [
@@ -76,7 +76,7 @@ Return a file.
 GET /files/{{id}}/meta
 ```
 Return meta-data of file.
-Response example:
+Example response:
 ```
 {
     "name": "image.png",
@@ -97,7 +97,7 @@ Body:
 upload_file: file
 ```
 Return ID of new file.
-Response example:
+Example response:
 ```
 {"id":"3"}
 ```
@@ -125,7 +125,7 @@ Body:
 }
 ```
 Return ID of file.
-Response example:
+Example response:
  ```
 {"id":"1"}
 ```

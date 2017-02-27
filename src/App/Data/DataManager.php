@@ -3,7 +3,6 @@
 namespace App\Data;
 
 use Doctrine\DBAL\Connection;
-use App\Data\Entities;
 
 /**
  * Class DataManager
